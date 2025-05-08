@@ -1,28 +1,15 @@
-import { DataSource } from "typeorm"
+import { PrismaClient } from "../../prisma/generated/prisma/index.js";
+import { PrismaNeon } from '@prisma/adapter-neon'
 
-import { User } from "./entities/User.js";
-import { Event } from "./entities/Event.js";
-import { Post } from "./entities/Post.js";
-import { Ticket } from "./entities/Ticket.js";
+const DATABASE_URL = process.env.DB_URL || 'No DB url found';
 
-const DB_URL = process.env.DB_URL || 'No DB url found';
+const adapter = new PrismaNeon({ connectionString: DATABASE_URL });
+const prisma = new PrismaClient({ adapter })
 
-const appDataSource = new DataSource({
-    type: "postgres",
-    url: DB_URL,
-    entities: [User],
-    synchronize: false,
-    logging: false,
-});
-
-const usersRepo = appDataSource.getRepository(User)
-const eventRepo = appDataSource.getRepository(Event)
-const ticketRepo = appDataSource.getRepository(Ticket)
-const postRepo = appDataSource.getRepository(Post)
+function execute<T>(fn: (prisma: PrismaClient) => T) {
+    return fn(prisma);
+}
 
 export {
-    usersRepo,
-    eventRepo,
-    ticketRepo,
-    postRepo,
+    execute
 };
