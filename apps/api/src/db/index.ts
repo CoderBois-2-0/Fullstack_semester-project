@@ -1,15 +1,20 @@
-import { PrismaClient } from "../../prisma/generated/prisma/index.js";
-import { PrismaNeon } from '@prisma/adapter-neon'
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import * as schema from './schema';
 
-const DATABASE_URL = process.env.DB_URL || 'No DB url found';
+let db: null | ReturnType<typeof connect> = null;
 
-const adapter = new PrismaNeon({ connectionString: DATABASE_URL });
-const prisma = new PrismaClient({ adapter })
+function connect(dbUrl: string) {
+    return drizzle(dbUrl, { schema });
+}
 
-function execute<T>(fn: (prisma: PrismaClient) => T) {
-    return fn(prisma);
+function getDBClient(dbUrl: string) {
+    if (!db) {
+        db = connect(dbUrl);
+    }
+
+    return db;
 }
 
 export {
-    execute
+    getDBClient,
 };

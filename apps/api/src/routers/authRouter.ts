@@ -1,12 +1,17 @@
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
+import { setCookie } from "hono/cookie";
 import { zValidator } from '@hono/zod-validator'
 import { z } from "zod";
-import argon2 from 'argon2';
 
-import { userHandler } from "@/db/handlers/userHandler.js";
-import { type Bindings } from "@/index.js";
-import { setCookie } from "hono/cookie";
+import { UserHandler } from "@/db/handlers/userHandler";
+import { type Bindings } from "@/routers/index";
+import { AUTH_COOKIE_NAME } from "./protectedRouter/index";
+import { hash, verify } from "@/crypto";
+
+interface Variables {
+    userHandler: UserHandler;
+}
 
 const signUpSchema = z.object({
     role: z.enum(['ADMIN', 'ORGANISER', 'GUEST']),
@@ -23,19 +28,31 @@ const signInSchema = z.object({
 });
 const signInValidator = zValidator('json', signInSchema);
 
-const authRouter = new Hono<{ Bindings: Bindings }>()
+const authRouter = new Hono<{ Bindings: Bindings, Variables: Variables }>()
+    .use(async (c, next) => {
+        c.set('userHandler', new UserHandler(c.env.DB_URL));
+
+        await next();
+    })
     .post('/sign-up', signUpValidator, async (c) => {
+        const userHandler = c.get('userHandler');
+
         const { confirmPassword: _confirmPassword, ...newUser} = c.req.valid('json');
 
-        const hashedPassword = await argon2.hash(newUser.password);
-        const { password: _password, ...user } = await userHandler.createUser({ ...newUser, password: hashedPassword });
+        const hashedPassword = await hash(newUser.password);
+        const createdUser = await userHandler.createUser({ ...newUser, password: hashedPassword });
+        if (!createdUser) {
+            return c.json({ data: 'User not created' }, 500);
+        }
 
+        const { password, ...user } = createdUser;
         const jwtToken = await sign(user, c.env.JWT_SECRET);
-        setCookie(c, 'auth-token', jwtToken);
+        setCookie(c, AUTH_COOKIE_NAME, jwtToken);
 
         return c.json({ user });
     })
     .post('/sign-in',signInValidator, async (c) => {
+        const userHandler = c.get('userHandler');
         const user = c.req.valid('json');
 
         const existingUser = await userHandler.findUserByEmail(user.email);
@@ -43,13 +60,13 @@ const authRouter = new Hono<{ Bindings: Bindings }>()
             return c.json({ data: 'No user found' }, 404);
         }
 
-        const isPasswordValid = await argon2.verify(existingUser.password, user.password);
+        const isPasswordValid = await verify(existingUser.password, user.password);
         if (!isPasswordValid) {
             return c.json({ data: 'Unauthorized' }, 401);
         }
 
         const jwtToken = await sign(user, c.env.JWT_SECRET);
-        setCookie(c, 'auth-token', jwtToken);
+        setCookie(c, AUTH_COOKIE_NAME, jwtToken);
 
         return c.json({ user: existingUser });
     });
