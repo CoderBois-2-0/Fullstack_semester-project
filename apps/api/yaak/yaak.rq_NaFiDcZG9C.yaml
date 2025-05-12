@@ -17,12 +17,12 @@ body:
       "confirmPassword": "admin123"
     }
 bodyType: application/json
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: mA5riTYQvB
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: mA5riTYQvB
 method: POST
 name: sign-up
 sortPriority: 1000.0

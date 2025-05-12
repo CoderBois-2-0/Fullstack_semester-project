@@ -2,17 +2,17 @@ type: http_request
 model: http_request
 id: rq_eMCLrCWPYj
 createdAt: 2025-05-09T19:58:00.625476523
-updatedAt: 2025-05-09T19:58:30.673360922
+updatedAt: 2025-05-10T07:53:15.727373918
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_wGkWYPqXgh
 authentication: {}
 authenticationType: null
 body: {}
 bodyType: null
-description: ''
+description: ""
 headers: []
 method: GET
 name: find event by id
-sortPriority: 999.9998
+sortPriority: 1000.0
 url: ${[ URL ]}/events/1
 urlParameters: []

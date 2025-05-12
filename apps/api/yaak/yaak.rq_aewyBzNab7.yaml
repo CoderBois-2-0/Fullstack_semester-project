@@ -1,0 +1,30 @@
+type: http_request
+model: http_request
+id: rq_aewyBzNab7
+createdAt: 2025-05-10T07:51:18.164573458
+updatedAt: 2025-05-10T08:06:07.139441641
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_wGkWYPqXgh
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "Cringe lan party",
+      "price": 100.95,
+      "location": "Cringe location",
+      "startDate": "2025-06-06T08:00:24.068Z",
+      "endDate": "2025-06-16T08:00:24.068Z"
+    }
+bodyType: application/json
+description: ""
+headers:
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: zNhMuSwPxD
+method: POST
+name: create event
+sortPriority: 2000.0
+url: ${[ URL ]}/events
+urlParameters: []

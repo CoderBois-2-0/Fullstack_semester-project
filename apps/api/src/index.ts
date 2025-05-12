@@ -1,4 +1,3 @@
-import app from '@/routers/index';
-
+import app from "@/routers/index";
 
 export default app;
