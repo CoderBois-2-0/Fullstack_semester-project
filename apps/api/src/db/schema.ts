@@ -27,7 +27,7 @@ const eventTable = pgTable("events", {
   price: real("price").notNull(),
   location: text("location").notNull(),
   startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
   creatorId: text("creator_id").notNull(),
 }, (table) => [
   foreignKey({

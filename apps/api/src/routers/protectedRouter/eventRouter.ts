@@ -10,8 +10,7 @@ import {
 import { z } from "zod";
 import { TProtectedVariables } from ".";
 
-interface EventVariables {
-  protected: TProtectedVariables;
+interface EventVariables extends TProtectedVariables {
   eventHandler: EventHandler;
 }
 
@@ -20,14 +19,14 @@ const eventPostValidator = zValidator(
   eventInsertSchema.omit({ creatorId: true }).extend({
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-  }),
+  }).strict(),
 );
 const eventPutValidator = zValidator(
   "json",
-  eventUpdateSchema.omit({ id: true, creatorId: true }).extend({
-    startDate: z.string().datetime(),
-    endDate: z.string().datetime(),
-  }),
+  eventUpdateSchema.extend({
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+  }).strict(),
 );
 
 const eventRouter = new Hono<
@@ -57,7 +56,7 @@ const eventRouter = new Hono<
     return c.json({ event });
   })
   .post("/", eventPostValidator, async (c) => {
-    const user = c.get("protected").jwtPayload;
+    const user = c.get('jwtPayload');
     const eventHandler = c.get("eventHandler");
 
     const newEvent = c.req.valid("json");
@@ -69,11 +68,30 @@ const eventRouter = new Hono<
 
     return c.json({ event });
   })
-  .put("/:eventId", eventPutValidator, (c) => {
-    return c.json({ data: "Not implemented" }, 500);
+  .put("/:eventId", eventPutValidator, async (c) => {
+    const user = c.get('jwtPayload');
+    const eventHandler = c.get("eventHandler");
+    const eventId = c.req.param('eventId');
+
+    const updatedEvent = c.req.valid("json");
+    const startDate = updatedEvent.startDate ? new Date(updatedEvent.startDate) : undefined;
+    const endDate = updatedEvent.endDate ? new Date(updatedEvent.endDate) : undefined;
+
+    const event = await eventHandler.updateEvent(user.id, eventId, { ...updatedEvent, startDate, endDate });
+    if (!event) {
+      return c.json({ data: 'Could not update due to an error' }, 500);
+    }
+
+    return c.json({ event });
   })
-  .delete("/:eventId", (c) => {
-    return c.json({ data: "Not implemented" }, 500);
+  .delete("/:eventId", async (c) => {
+    const user = c.get('jwtPayload');
+    const eventHandler = c.get("eventHandler");
+    const eventId = c.req.param('eventId');
+
+    const event = await eventHandler.deleteEvent(user.id, eventId);
+
+    return c.json({ event });
   });
 
 export default eventRouter;

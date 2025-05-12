@@ -3,11 +3,12 @@ import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { getDBClient } from "@/db/index";
 import { eventTable } from "../schema";
 import { z } from "zod";
+import { and, eq } from "drizzle-orm";
 
 const eventInsertSchema = createInsertSchema(eventTable).omit({ id: true });
 type TEventInsert = z.infer<typeof eventInsertSchema>;
 
-const eventUpdateSchema = createUpdateSchema(eventTable);
+const eventUpdateSchema = createUpdateSchema(eventTable).omit({ id: true, creatorId: true });
 type TEventUpdate = z.infer<typeof eventUpdateSchema>;
 
 class EventHandler {
@@ -34,6 +35,18 @@ class EventHandler {
       ...newEvent,
       id: eventId,
     }).returning();
+
+    return eventsReturned.at(0);
+  }
+
+  async updateEvent(userId: string, eventId: string, updatedEvent: TEventUpdate) {
+    const eventsReturned = await this.#client.update(this.#table).set(updatedEvent).where(and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId))).returning();
+
+    return eventsReturned.at(0);
+  }
+
+  async deleteEvent(userId: string, eventId: string) {
+    const eventsReturned = await this.#client.delete(this.#table).where(and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId))).returning();
 
     return eventsReturned.at(0);
   }
