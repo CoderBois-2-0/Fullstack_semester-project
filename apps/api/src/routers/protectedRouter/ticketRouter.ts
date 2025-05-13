@@ -1,5 +1,8 @@
 import { Hono } from "hono";
 
+/**
+ * @var The ticket router
+ */
 const ticketRouter = new Hono()
   .get("/", (c) => {
     return c.json({ data: "Not implemented" }, 500);

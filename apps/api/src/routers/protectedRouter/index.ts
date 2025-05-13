@@ -2,14 +2,16 @@ import { Hono } from "hono";
 import { jwt, type JwtVariables } from "hono/jwt";
 
 import { AUTH_COOKIE_NAME } from "@/auth";
-import type { TUser } from '@/db/handlers/userHandler'
+import type { TUser } from "@/db/handlers/userHandler";
 import eventRouter from "./eventRouter";
 import ticketRouter from "./ticketRouter";
 import type { Bindings } from "@/routers/index";
 
+type TProtectedVariables = JwtVariables<Omit<TUser, "password">>;
 
-type TProtectedVariables = JwtVariables<Omit<TUser, 'password'>>;
-
+/**
+ * @var The router for routes that should be protected by jwt
+ */
 const protectedRouter = new Hono<{ Bindings: Bindings }>()
   .use(async (c, next) => {
     const jwtHandler = jwt({

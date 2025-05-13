@@ -7,28 +7,49 @@ import { type Bindings } from "@/routers/index";
 import { hash, verify } from "@/crypto";
 import { setJWTCookie } from "@/auth";
 
+/**
+ * @description
+ * The variables for the aut router
+ */
 interface Variables {
   userHandler: UserHandler;
 }
 
-const signUpSchema = z.object({
-  role: z.enum(["ADMIN", "ORGANISER", "GUEST"]),
-  username: z.string(),
-  email: z.string().email(),
-  password: z.string().min(8),
-  confirmPassword: z.string(),
-}).refine((value) => value.password === value.confirmPassword, {
-  message: "Passwords must match",
-  path: ["confirm-password"],
-});
+/**
+ * @var The zod schema used for user sign up
+ */
+const signUpSchema = z
+  .object({
+    role: z.enum(["ADMIN", "ORGANISER", "GUEST"]),
+    username: z.string(),
+    email: z.string().email(),
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .refine((value) => value.password === value.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirm-password"],
+  });
+/**
+ * @var The sign up validator
+ */
 const signUpValidator = zValidator("json", signUpSchema);
 
+/**
+ * @var The zod schema used for user sign in
+ */
 const signInSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
+/**
+ * @var The sign in validator
+ */
 const signInValidator = zValidator("json", signInSchema);
 
+/**
+ * @var The auth router, used for routes that deal with authentication
+ */
 const authRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>()
   .use(async (c, next) => {
     c.set("userHandler", new UserHandler(c.env.DB_URL));
@@ -38,9 +59,8 @@ const authRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>()
   .post("/sign-up", signUpValidator, async (c) => {
     const userHandler = c.get("userHandler");
 
-    const { confirmPassword: _confirmPassword, ...newUser } = c.req.valid(
-      "json",
-    );
+    const { confirmPassword: _confirmPassword, ...newUser } =
+      c.req.valid("json");
 
     const hashedPassword = await hash(newUser.password);
     const createdUser = await userHandler.createUser({
