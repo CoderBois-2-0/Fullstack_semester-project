@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_jitXoYnUuG
+createdAt: 2025-05-14T09:27:31.487651444
+updatedAt: 2025-05-14T09:46:03.902478339
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_WFghCdGZ9V
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get all tickets
+sortPriority: 0.0
+url: ${[ URL ]}/tickets
+urlParameters: []

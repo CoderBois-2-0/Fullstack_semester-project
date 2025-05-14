@@ -6,6 +6,8 @@ import type { TUser } from "@/db/handlers/userHandler";
 import eventRouter from "./eventRouter";
 import ticketRouter from "./ticketRouter";
 import type { Bindings } from "@/routers/index";
+import postRouter from "./postRouter";
+import commentRouter from "./commentRouter";
 
 type TProtectedVariables = JwtVariables<Omit<TUser, "password">>;
 
@@ -22,7 +24,9 @@ const protectedRouter = new Hono<{ Bindings: Bindings }>()
     return jwtHandler(c, next);
   })
   .route("/events", eventRouter)
-  .route("/tickets", ticketRouter);
+  .route("/tickets", ticketRouter)
+  .route("/posts", postRouter)
+  .route("/comments", commentRouter);
 
 export default protectedRouter;
 export { AUTH_COOKIE_NAME, TProtectedVariables };

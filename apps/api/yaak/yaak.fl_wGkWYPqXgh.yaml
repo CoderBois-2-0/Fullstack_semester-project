@@ -2,9 +2,9 @@ type: folder
 model: folder
 id: fl_wGkWYPqXgh
 createdAt: 2025-05-09T19:39:13.543697424
-updatedAt: 2025-05-09T19:39:32.091593624
+updatedAt: 2025-05-14T09:24:15.509117328
 workspaceId: wk_JGkqCBFFB5
 folderId: null
 name: events
-description: ""
+description: ''
 sortPriority: 1000.0

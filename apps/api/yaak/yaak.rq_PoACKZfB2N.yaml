@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_PoACKZfB2N
+createdAt: 2025-05-14T09:50:39.393859789
+updatedAt: 2025-05-14T09:50:44.393361479
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_nRUYCHqGen
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get all comments
+sortPriority: -0.0002
+url: ''
+urlParameters: []

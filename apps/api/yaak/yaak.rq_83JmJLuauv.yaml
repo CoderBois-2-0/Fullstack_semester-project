@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_83JmJLuauv
+createdAt: 2025-05-14T09:50:28.366190287
+updatedAt: 2025-05-14T09:58:04.738068361
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_BFZvcsLoMC
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get all posts
+sortPriority: -0.0001
+url: ''
+urlParameters: []
