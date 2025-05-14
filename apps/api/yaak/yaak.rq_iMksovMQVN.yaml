@@ -1,0 +1,23 @@
+type: http_request
+model: http_request
+id: rq_iMksovMQVN
+createdAt: 2025-05-14T09:40:32.746747109
+updatedAt: 2025-05-14T09:46:03.903006316
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_WFghCdGZ9V
+authentication: {}
+authenticationType: null
+body:
+  text: "{\n  \"eventId\": \"438a5d11-a385-4595-b680-b0cd5e52e5f8\" \n}"
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: GPr3vQeaYt
+method: PUT
+name: update ticket
+sortPriority: 3000.0
+url: ${[ URL ]}/tickets/c8befabd-0ab2-4e1b-9b98-921e9716aabe
+urlParameters: []

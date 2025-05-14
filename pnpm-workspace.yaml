@@ -1,3 +1,7 @@
 packages:
   - apps/api
   - apps/client
+ignoredBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

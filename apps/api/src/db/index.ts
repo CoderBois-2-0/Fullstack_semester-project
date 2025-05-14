@@ -1,28 +1,32 @@
-import { DataSource } from "typeorm"
+import { drizzle } from "drizzle-orm/neon-serverless";
+import * as schema from "./schema";
 
-import { User } from "./entities/User.js";
-import { Event } from "./entities/Event.js";
-import { Post } from "./entities/Post.js";
-import { Ticket } from "./entities/Ticket.js";
+/**
+ * @description
+ * The drizzle db client, used for retaining a single client
+ */
+let db: null | ReturnType<typeof connect> = null;
 
-const DB_URL = process.env.DB_URL || 'No DB url found';
+/**
+ * @param dbUrl - The url used to connect to the database
+ * @returns A drizzle database client
+ */
+function connect(dbUrl: string) {
+  return drizzle(dbUrl, { schema });
+}
 
-const appDataSource = new DataSource({
-    type: "postgres",
-    url: DB_URL,
-    entities: [User],
-    synchronize: false,
-    logging: false,
-});
+/**
+ * @description
+ * Retrieves the db client, will connect if the client is not already connected to the database
+ * @param dbUrl - The url used to connect to the database
+ * @returns The drizzle db client
+ */
+function getDBClient(dbUrl: string) {
+  if (!db) {
+    db = connect(dbUrl);
+  }
 
-const usersRepo = appDataSource.getRepository(User)
-const eventRepo = appDataSource.getRepository(Event)
-const ticketRepo = appDataSource.getRepository(Ticket)
-const postRepo = appDataSource.getRepository(Post)
+  return db;
+}
 
-export {
-    usersRepo,
-    eventRepo,
-    ticketRepo,
-    postRepo,
-};
+export { getDBClient };

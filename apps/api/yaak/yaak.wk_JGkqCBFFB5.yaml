@@ -1,0 +1,10 @@
+type: workspace
+model: workspace
+id: wk_JGkqCBFFB5
+createdAt: 2025-05-08T13:55:01.070727731
+updatedAt: 2025-05-08T13:58:22
+name: kea_fullstack_project_api
+description: ""
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

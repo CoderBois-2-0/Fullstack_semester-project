@@ -1,16 +1,4 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import "reflect-metadata";
+import app from "@/routers/index";
 
-const app = new Hono()
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-serve({
-  fetch: app.fetch,
-  port: 3000
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
+// Entry point for the app
+export default app;

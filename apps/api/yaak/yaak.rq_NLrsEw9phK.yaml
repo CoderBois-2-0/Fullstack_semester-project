@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_NLrsEw9phK
+createdAt: 2025-05-14T09:49:37.399443069
+updatedAt: 2025-05-14T09:50:07.504126704
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_WFghCdGZ9V
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: DELETE
+name: delete ticket
+sortPriority: 3000.0
+url: ${[ URL ]}/tickets/c8befabd-0ab2-4e1b-9b98-921e9716aabe
+urlParameters: []

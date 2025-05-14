@@ -7,12 +7,17 @@
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
+.zed
 
 # deps
 node_modules/
 
 # env
 .env
+.dev.vars
+
+# build
+.wrangler
 
 # logs
 logs/

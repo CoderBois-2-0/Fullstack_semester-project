@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1746815662653,
+      "tag": "0000_nasty_proteus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746820180453,
+      "tag": "0001_public_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747076119725,
+      "tag": "0002_panoramic_jocasta",
+      "breakpoints": true
+    }
+  ]
+}

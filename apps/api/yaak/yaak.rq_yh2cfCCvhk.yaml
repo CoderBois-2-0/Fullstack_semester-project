@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_yh2cfCCvhk
+createdAt: 2025-05-14T09:28:19.469641167
+updatedAt: 2025-05-14T09:46:03.902828290
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_WFghCdGZ9V
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "eventId": "daeb50d5-020f-4a30-a3b9-40eac45501fa"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: hHKFPIUxIf
+method: POST
+name: create ticket
+sortPriority: 2000.0
+url: ${[ URL ]}/tickets
+urlParameters: []

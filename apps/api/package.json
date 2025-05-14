@@ -2,20 +2,27 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "wrangler dev",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "dotenv -e .dev.vars -- drizzle-kit migrate"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
+    "@hono/zod-validator": "^0.5.0",
+    "@neondatabase/serverless": "^1.0.0",
+    "dotenv-cli": "^8.0.0",
+    "drizzle-orm": "^0.43.1",
+    "drizzle-zod": "^0.7.1",
     "hono": "^4.7.8",
     "pg": "^8.15.6",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.23"
+    "wrangler": "^4.14.4",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/node": "^20.17.45",
-    "tsx": "^4.7.1",
+    "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.3"
   }
 }

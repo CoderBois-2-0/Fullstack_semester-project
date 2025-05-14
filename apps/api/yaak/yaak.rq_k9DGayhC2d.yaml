@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_k9DGayhC2d
+createdAt: 2025-05-09T19:39:55.147682257
+updatedAt: 2025-05-12T19:30:10.009622489
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_wGkWYPqXgh
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get all events
+sortPriority: 0.0
+url: ${[ URL ]}/events
+urlParameters: []
