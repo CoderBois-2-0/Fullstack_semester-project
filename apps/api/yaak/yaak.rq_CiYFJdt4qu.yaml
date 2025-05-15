@@ -1,8 +1,8 @@
 type: http_request
 model: http_request
-id: rq_83JmJLuauv
-createdAt: 2025-05-14T09:50:28.366190287
-updatedAt: 2025-05-14T19:30:24.163755935
+id: rq_CiYFJdt4qu
+createdAt: 2025-05-14T19:30:05.984816939
+updatedAt: 2025-05-14T19:33:27.713420105
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_BFZvcsLoMC
 authentication: {}
@@ -11,8 +11,8 @@ body: {}
 bodyType: null
 description: ''
 headers: []
-method: GET
-name: get all posts
-sortPriority: 0.0
-url: ${[ URL ]}/posts
+method: DELETE
+name: delete post
+sortPriority: 3000.0
+url: ${[ URL ]}/posts/
 urlParameters: []

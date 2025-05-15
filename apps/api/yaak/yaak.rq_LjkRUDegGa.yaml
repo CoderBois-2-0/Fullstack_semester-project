@@ -1,0 +1,29 @@
+type: http_request
+model: http_request
+id: rq_LjkRUDegGa
+createdAt: 2025-05-14T19:29:42.759592278
+updatedAt: 2025-05-14T19:32:33.110352677
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_BFZvcsLoMC
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "title": "Cringe post",
+      "content": "Cringe content of cringe post",
+      "createdAt": "2025-06-06T08:00:24.068Z",
+      "eventId": "daeb50d5-020f-4a30-a3b9-40eac45501fa"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: ec5245b5ES
+method: POST
+name: create post
+sortPriority: 1000.0
+url: ${[ URL ]}/posts
+urlParameters: []

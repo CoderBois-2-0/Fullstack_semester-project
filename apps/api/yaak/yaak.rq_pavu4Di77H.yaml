@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_pavu4Di77H
+createdAt: 2025-05-14T19:29:56.668473561
+updatedAt: 2025-05-14T19:33:12.573372836
+workspaceId: wk_JGkqCBFFB5
+folderId: fl_BFZvcsLoMC
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "title": "Cringe post",
+      "content": "Cringe content of cringe post",
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: AwXNyb3Nke
+method: PUT
+name: update post
+sortPriority: 2000.0
+url: ${[ URL ]}/posts/
+urlParameters: []
