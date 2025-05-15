@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import {
   createSelectSchema,
   createInsertSchema,
@@ -7,7 +7,8 @@ import {
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
-import { eventTable } from "../schema";
+import { eventTable, ticketTable } from "../schema";
+import { TEventGetQuery } from "@/routers/protectedRouter/eventRouter/openAPI";
 
 const eventSelectSchema = createSelectSchema(eventTable);
 /**
@@ -61,10 +62,48 @@ class EventHandler {
   /**
    * @description
    * Retrieves all events
+   * @param query - A query to specify which events to retrieve
    * @returns A list of all events
    */
-  async getEvents() {
-    return this.#client.query.eventTable.findMany();
+  async getEvents(query: TEventGetQuery) {
+    let queryBuilder = this.#client
+      .select({
+        event: getTableColumns(this.#table),
+        ...(query["with-tickets"] !== undefined
+          ? {
+              tickets: getTableColumns(ticketTable),
+              ticketCount: this.#client.$count(
+                ticketTable,
+                eq(this.#table.id, ticketTable.eventId),
+              ),
+            }
+          : {}),
+      })
+      .from(this.#table)
+      .$dynamic();
+
+    if (query["with-tickets"] !== undefined) {
+      queryBuilder = queryBuilder.leftJoin(
+        ticketTable,
+        eq(this.#table.id, ticketTable.eventId),
+      );
+    }
+
+    if (query["user-id"] !== undefined) {
+      queryBuilder = queryBuilder.where(
+        eq(this.#table.creatorId, query["user-id"]),
+      );
+    }
+
+    if (query.limit !== undefined) {
+      queryBuilder = queryBuilder.limit(query.limit);
+    }
+
+    if (query.page !== undefined) {
+      queryBuilder = queryBuilder.offset(query.page);
+    }
+
+    return queryBuilder.execute();
   }
 
   /**

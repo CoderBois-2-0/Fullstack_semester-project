@@ -6,6 +6,21 @@ import {
 import { createRoute, z } from "@hono/zod-openapi";
 
 /**
+ * @var The zod schema for the events get route's query string
+ */
+const eventGetQuerySchema = z.object({
+  "user-id": z.string().optional(),
+  "with-tickets": z.coerce.boolean(),
+  limit: z.coerce.number().min(0).max(100).optional(),
+  page: z.coerce.number().min(1).optional(),
+});
+/**
+ * @description
+ * The type for event's get query string
+ */
+type TEventGetQuery = z.infer<typeof eventGetQuerySchema>;
+
+/**
  * @var The openAPI spec for the events get route
  */
 const eventGetRoute = createRoute({
@@ -13,6 +28,9 @@ const eventGetRoute = createRoute({
   tags: ["Events"],
   method: "get",
   path: "/",
+  request: {
+    query: eventGetQuerySchema,
+  },
   responses: {
     200: {
       description: "The new event was created",
@@ -159,6 +177,7 @@ const eventDeleteRoute = createRoute({
 
 export {
   eventGetRoute,
+  TEventGetQuery,
   eventGetByIdRoute,
   eventPostRoute,
   eventPutRoute,

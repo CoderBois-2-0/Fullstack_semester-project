@@ -68,8 +68,8 @@ class TicketHandler {
     let queryBuilder = this.#client
       .select({
         ticket: getTableColumns(this.#table),
-        ...(query["with-event"]
-          ? { event: { ...getTableColumns(eventTable) } }
+        ...(query["with-event"] !== undefined
+          ? { event: getTableColumns(eventTable) }
           : {}),
       })
       .from(this.#table)
