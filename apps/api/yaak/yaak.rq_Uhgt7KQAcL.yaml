@@ -1,8 +1,8 @@
 type: http_request
 model: http_request
-id: rq_NaFiDcZG9C
-createdAt: 2025-05-08T13:55:13.868302416
-updatedAt: 2025-05-15T14:29:44.324273543
+id: rq_Uhgt7KQAcL
+createdAt: 2025-05-15T14:29:36.873551871
+updatedAt: 2025-05-15T14:31:23.562748650
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_gYmfZMWsYu
 authentication: {}
@@ -10,11 +10,8 @@ authenticationType: null
 body:
   text: |-
     {
-      "role": "ADMIN",
-      "username": "doro-hd",
       "email": "sid.doro-hd@protonmail.com",
-      "password": "admin123",
-      "confirmPassword": "admin123"
+      "password": "admin123"
     }
 bodyType: application/json
 description: ''
@@ -22,9 +19,9 @@ headers:
 - enabled: true
   name: Content-Type
   value: application/json
-  id: mA5riTYQvB
+  id: 0M3wyhnFUT
 method: POST
-name: sign-up
-sortPriority: 0.0
-url: ${[ URL ]}/auth/sign-up
+name: sign-in
+sortPriority: 1000.0
+url: ${[ URL ]}/auth/sign-in
 urlParameters: []

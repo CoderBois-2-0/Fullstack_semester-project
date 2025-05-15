@@ -1,9 +1,19 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
-import { ticketTable } from "@/db/schema";
+import { eventTable, ticketTable } from "@/db/schema";
+import { TTicketGetQuery } from "@/routers/protectedRouter/ticketRouter/openAPI";
+import { TEvent } from "./eventHandler";
+import { createSelectSchema } from "drizzle-zod";
+
+const ticketSelectSchema = createSelectSchema(ticketTable);
+/**
+ * @description
+ * The type for a ticket when using select
+ */
+type TTicket = typeof ticketSelectSchema;
 
 /**
  * @description
@@ -49,10 +59,44 @@ class TicketHandler {
   /**
    * @description
    * Retrieves all tickets
+   * @param query - A query object for allowing dynamic selection
    * @returns A list of all tickets
    */
-  async getTickets() {
-    return this.#client.query.ticketTable.findMany();
+  async getTickets(
+    query: TTicketGetQuery,
+  ): Promise<({ ticket: TTicket } | { ticket: TTicket; event: TEvent })[]> {
+    let queryBuilder = this.#client
+      .select({
+        ticket: getTableColumns(this.#table),
+        ...(query["with-event"]
+          ? { event: { ...getTableColumns(eventTable) } }
+          : {}),
+      })
+      .from(this.#table)
+      .$dynamic();
+
+    if (query["with-event"] !== undefined) {
+      queryBuilder = queryBuilder.innerJoin(
+        eventTable,
+        eq(this.#table.eventId, eventTable.id),
+      );
+    }
+
+    if (query["user-id"] !== undefined) {
+      queryBuilder = queryBuilder.where(
+        eq(this.#table.userId, query["user-id"]),
+      );
+    }
+
+    if (query.limit !== undefined) {
+      queryBuilder = queryBuilder.limit(query.limit);
+    }
+
+    if (query.page !== undefined) {
+      queryBuilder = queryBuilder.offset(query.page);
+    }
+
+    return queryBuilder.execute();
   }
 
   /**
@@ -119,4 +163,9 @@ class TicketHandler {
   }
 }
 
-export { TicketHandler, ticketInsertSchema, ticketUpdateSchema };
+export {
+  TicketHandler,
+  ticketSelectSchema,
+  ticketInsertSchema,
+  ticketUpdateSchema,
+};

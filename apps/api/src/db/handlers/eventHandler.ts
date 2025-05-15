@@ -1,9 +1,20 @@
 import { and, eq } from "drizzle-orm";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import {
+  createSelectSchema,
+  createInsertSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { eventTable } from "../schema";
+
+const eventSelectSchema = createSelectSchema(eventTable);
+/**
+ * @description
+ * The type for an event when using select
+ */
+type TEvent = typeof eventTable.$inferSelect;
 
 /**
  * @description
@@ -130,4 +141,10 @@ class EventHandler {
   }
 }
 
-export { EventHandler, eventInsertSchema, eventUpdateSchema };
+export {
+  EventHandler,
+  eventInsertSchema,
+  eventUpdateSchema,
+  eventSelectSchema,
+  TEvent,
+};
