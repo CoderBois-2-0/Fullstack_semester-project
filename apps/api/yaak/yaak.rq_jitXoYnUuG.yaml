@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_jitXoYnUuG
 createdAt: 2025-05-14T09:27:31.487651444
-updatedAt: 2025-05-14T09:46:03.902478339
+updatedAt: 2025-05-15T15:15:03.924597526
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_WFghCdGZ9V
 authentication: {}
@@ -15,4 +15,24 @@ method: GET
 name: get all tickets
 sortPriority: 0.0
 url: ${[ URL ]}/tickets
-urlParameters: []
+urlParameters:
+- enabled: true
+  name: with-event
+  value: 'false'
+  id: tvGiJe7Ghb
+- enabled: false
+  name: limit
+  value: '1'
+  id: Q5jiVdJy6R
+- enabled: false
+  name: page
+  value: '2'
+  id: 9cv5tetMaR
+- enabled: false
+  name: user-id
+  value: ''
+  id: VeQX43tvdI
+- enabled: true
+  name: ''
+  value: ''
+  id: AT5F4QgK5f

@@ -1,4 +1,5 @@
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
 
 import protectedRouter from "./protectedRouter/index";
@@ -26,15 +27,33 @@ interface Bindings {
 /**
  * @var The base router
  */
-const app = new Hono<{ Bindings: Bindings }>()
-  .use(async (c, next) => {
-    const corsHandler = cors({
-      origin: c.env.CORS_ORIGIN,
-      credentials: true,
-    });
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
-    return corsHandler(c, next);
+app.use(async (c, next) => {
+  const corsHandler = cors({
+    origin: c.env.CORS_ORIGIN,
+    credentials: true,
+  });
+
+  return corsHandler(c, next);
+});
+
+app
+  .doc("/doc", {
+    openapi: "3.0.0",
+    tags: [
+      { name: "Auth" },
+      { name: "Events" },
+      { name: "Tickets" },
+      { name: "Posts" },
+      { name: "Comments" },
+    ],
+    info: {
+      version: "1.0.0",
+      title: "Queue Up API",
+    },
   })
+  .get("/doc/ui", swaggerUI({ url: "/doc" }))
   .route("/auth", authRouter)
   .route("/", protectedRouter);
 

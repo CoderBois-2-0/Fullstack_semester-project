@@ -1,9 +1,16 @@
 import { eq } from "drizzle-orm";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { commentTable } from "@/db/schema";
+
+const commentSelectSchema = createSelectSchema(commentTable);
+type TComment = z.infer<typeof commentSelectSchema>;
 
 /**
  * @description
@@ -93,16 +100,11 @@ class CommentHandler {
    * @param updatedComment - The data to update the comment with
    * @returns - The updated comment with all it's fields
    */
-  async updateComment(
-    commentId: string,
-    updatedComment: TCommentUpdate,
-  ) {
+  async updateComment(commentId: string, updatedComment: TCommentUpdate) {
     const commentsReturned = await this.#client
       .update(this.#table)
       .set(updatedComment)
-      .where(
-        eq(this.#table.id, commentId),
-      )
+      .where(eq(this.#table.id, commentId))
       .returning();
 
     return commentsReturned.at(0);
@@ -117,13 +119,16 @@ class CommentHandler {
   async deleteComment(commentId: string) {
     const commentsReturned = await this.#client
       .delete(this.#table)
-      .where(
-        eq(this.#table.id, commentId),
-      )
+      .where(eq(this.#table.id, commentId))
       .returning();
 
     return commentsReturned.at(0);
   }
 }
 
-export { CommentHandler, commentInsertSchema, commentUpdateSchema };
+export {
+  CommentHandler,
+  commentSelectSchema,
+  commentInsertSchema,
+  commentUpdateSchema,
+};

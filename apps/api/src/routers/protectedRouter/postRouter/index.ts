@@ -1,13 +1,15 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 import { Bindings } from "@/routers/index";
-import { TProtectedVariables } from "./index";
+import { TProtectedVariables } from "@/routers/protectedRouter/index";
+import { PostHandler } from "@/db/handlers/postHandler";
 import {
-  PostHandler,
-  postInsertSchema,
-  postUpdateSchema,
-} from "@/db/handlers/postHandler";
+  postDeleteRoute,
+  postGetByIdRoute,
+  postGetRoute,
+  postPostRoute,
+  postPutRoute,
+} from "./openAPI";
 
 /**
  * @description
@@ -22,38 +24,28 @@ interface IPostVariables extends TProtectedVariables {
 }
 
 /**
- * @var The validator for the post request for posts
- */
-const postPostValidator = zValidator(
-  "json",
-  postInsertSchema.omit({ userId: true }).strict(),
-);
-
-/**
- * @var The validator for the put request for posts
- */
-const postPutValidator = zValidator(
-  "json",
-  postUpdateSchema.omit({ userId: true }).strict(),
-);
-
-/**
  * @var The posts router
  */
-const postRouter = new Hono<{ Bindings: Bindings; Variables: IPostVariables }>()
-  .use(async (c, next) => {
-    c.set("postHandler", new PostHandler(c.env.DB_URL));
+const postRouter = new OpenAPIHono<{
+  Bindings: Bindings;
+  Variables: IPostVariables;
+}>();
 
-    await next();
-  })
-  .get("/", async (c) => {
+postRouter.use(async (c, next) => {
+  c.set("postHandler", new PostHandler(c.env.DB_URL));
+
+  await next();
+});
+
+postRouter
+  .openapi(postGetRoute, async (c) => {
     const postHandler = c.get("postHandler");
 
     const posts = await postHandler.getPosts();
 
     return c.json({ posts });
   })
-  .get("/:postId", async (c) => {
+  .openapi(postGetByIdRoute, async (c) => {
     const postId = c.req.param("postId");
     const postHandler = c.get("postHandler");
 
@@ -64,7 +56,7 @@ const postRouter = new Hono<{ Bindings: Bindings; Variables: IPostVariables }>()
 
     return c.json({ post });
   })
-  .post("/", postPostValidator, async (c) => {
+  .openapi(postPostRoute, async (c) => {
     const user = c.get("jwtPayload");
     const postHandler = c.get("postHandler");
     const newPost = c.req.valid("json");
@@ -76,7 +68,7 @@ const postRouter = new Hono<{ Bindings: Bindings; Variables: IPostVariables }>()
 
     return c.json({ post });
   })
-  .put("/:postId", postPutValidator, async (c) => {
+  .openapi(postPutRoute, async (c) => {
     const postHandler = c.get("postHandler");
     const postId = c.req.param("postId");
     const updatedPost = c.req.valid("json");
@@ -88,7 +80,7 @@ const postRouter = new Hono<{ Bindings: Bindings; Variables: IPostVariables }>()
 
     return c.json({ post });
   })
-  .delete("/:postId", async (c) => {
+  .openapi(postDeleteRoute, async (c) => {
     const postHandler = c.get("postHandler");
     const postId = c.req.param("postId");
 

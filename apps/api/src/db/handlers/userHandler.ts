@@ -1,7 +1,10 @@
+import { z } from "zod";
 import { getDBClient } from "@/db/index";
 import { userTable } from "@/db//schema";
+import { createSelectSchema } from "drizzle-zod";
 
-type TUser = typeof userTable.$inferInsert;
+const userSelectSchema = createSelectSchema(userTable);
+type TUser = z.infer<typeof userSelectSchema>;
 
 class UserHandler {
   #client: ReturnType<typeof getDBClient>;
@@ -20,13 +23,16 @@ class UserHandler {
   async createUser(newUser: Omit<TUser, "id">) {
     const userId = crypto.randomUUID();
 
-    const usersInserted = await this.#client.insert(this.#table).values({
-      ...newUser,
-      id: userId,
-    }).returning();
+    const usersInserted = await this.#client
+      .insert(this.#table)
+      .values({
+        ...newUser,
+        id: userId,
+      })
+      .returning();
 
     return usersInserted.at(0);
   }
 }
 
-export { UserHandler, TUser };
+export { UserHandler, userSelectSchema, TUser };
