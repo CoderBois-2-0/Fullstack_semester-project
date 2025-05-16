@@ -5,6 +5,8 @@ import {
 } from "@/db/handlers/commentHandler";
 import { createRoute } from "@hono/zod-openapi";
 
+const commentResponseSchema = commentSelectSchema.openapi("Comment Response");
+
 /**
  * @var The openAPI spec for the get route for comments
  */
@@ -18,7 +20,7 @@ const commentGetRoute = createRoute({
       description: "Retrieved all comments",
       content: {
         "application/json": {
-          schema: commentSelectSchema.array(),
+          schema: commentResponseSchema.array(),
         },
       },
     },
@@ -41,7 +43,7 @@ const commentGetByIdRoute = createRoute({
       description: "Retrieved the comment with the given id",
       content: {
         "application/json": {
-          schema: commentSelectSchema,
+          schema: commentResponseSchema,
         },
       },
     },
@@ -63,7 +65,10 @@ const commentPostRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: commentInsertSchema.omit({ userId: true }).strict(),
+          schema: commentInsertSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Comment post request"),
         },
       },
     },
@@ -73,7 +78,7 @@ const commentPostRoute = createRoute({
       description: "The new comment was created from the provided body",
       content: {
         "application/json": {
-          schema: commentSelectSchema,
+          schema: commentResponseSchema,
         },
       },
     },
@@ -96,7 +101,10 @@ const commentPutRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: commentUpdateSchema.omit({ userId: true }).strict(),
+          schema: commentUpdateSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Comment put request"),
         },
       },
     },
@@ -106,7 +114,7 @@ const commentPutRoute = createRoute({
       description: "The new comment was updated based on the provided body",
       content: {
         "application/json": {
-          schema: commentSelectSchema,
+          schema: commentResponseSchema,
         },
       },
     },
@@ -132,7 +140,7 @@ const commentDeleteRoute = createRoute({
       description: "The comment with the given id was deleted",
       content: {
         "application/json": {
-          schema: commentSelectSchema,
+          schema: commentResponseSchema,
         },
       },
     },
