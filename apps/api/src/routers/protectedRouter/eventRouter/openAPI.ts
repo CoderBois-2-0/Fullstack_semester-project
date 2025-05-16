@@ -10,7 +10,7 @@ import { createRoute, z } from "@hono/zod-openapi";
  */
 const eventGetQuerySchema = z.object({
   "user-id": z.string().optional(),
-  "with-tickets": z.coerce.boolean(),
+  "with-ticket-count": z.coerce.boolean().optional(),
   limit: z.coerce.number().min(0).max(100).optional(),
   page: z.coerce.number().min(1).optional(),
 });

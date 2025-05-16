@@ -41,7 +41,6 @@ eventRouter
   .openapi(eventGetRoute, async (c) => {
     const eventHandler = c.get("eventHandler");
     const query = c.req.valid("query");
-    console.log(query);
 
     const events = await eventHandler.getEvents(query);
 

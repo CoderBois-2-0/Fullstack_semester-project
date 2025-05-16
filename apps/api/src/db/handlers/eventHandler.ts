@@ -1,4 +1,4 @@
-import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import {
   createSelectSchema,
   createInsertSchema,
@@ -69,21 +69,17 @@ class EventHandler {
     let queryBuilder = this.#client
       .select({
         event: getTableColumns(this.#table),
-        ...(query["with-tickets"] !== undefined
+        ...(query["with-ticket-count"] === true
           ? {
-              tickets: getTableColumns(ticketTable),
-              ticketCount: sql`count(${ticketTable.id})`,
+              ticketCount: this.#client.$count(
+                ticketTable,
+                eq(this.#table.id, ticketTable.eventId),
+              ),
             }
           : {}),
       })
       .from(this.#table)
       .$dynamic();
-
-    if (query["with-tickets"] !== undefined) {
-      queryBuilder = queryBuilder
-        .leftJoin(ticketTable, eq(this.#table.id, ticketTable.eventId))
-        .groupBy(this.#table.id, ticketTable.eventId);
-    }
 
     if (query["user-id"] !== undefined) {
       queryBuilder = queryBuilder.where(
