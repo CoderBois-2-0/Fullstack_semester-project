@@ -5,6 +5,10 @@ import {
 } from "@/db/handlers/postHandler";
 import { createRoute } from "@hono/zod-openapi";
 
+const postResponseSchema = postSelectSchema
+  .openapi("Post Response")
+  .openapi("Post response");
+
 /**
  * @var The openAPI spec for the get route for posts
  */
@@ -18,7 +22,7 @@ const postGetRoute = createRoute({
       description: "All posts were retrieved",
       content: {
         "application/json": {
-          schema: postSelectSchema,
+          schema: postResponseSchema,
         },
       },
     },
@@ -41,7 +45,7 @@ const postGetByIdRoute = createRoute({
       description: "Found the post with the given id",
       content: {
         "application/json": {
-          schema: postSelectSchema,
+          schema: postResponseSchema,
         },
       },
     },
@@ -66,7 +70,10 @@ const postPostRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: postInsertSchema.omit({ userId: true }).strict(),
+          schema: postInsertSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Post post request"),
         },
       },
     },
@@ -76,7 +83,7 @@ const postPostRoute = createRoute({
       description: "The new post was created",
       content: {
         "application/json": {
-          schema: postSelectSchema.array(),
+          schema: postResponseSchema.array(),
         },
       },
     },
@@ -98,7 +105,10 @@ const postPutRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: postUpdateSchema.omit({ userId: true }).strict(),
+          schema: postUpdateSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Post put request"),
         },
       },
     },
@@ -109,7 +119,7 @@ const postPutRoute = createRoute({
         "The post with the given id was updated with the provided data",
       content: {
         "application/json": {
-          schema: postSelectSchema,
+          schema: postResponseSchema,
         },
       },
     },
@@ -135,7 +145,7 @@ const postDeleteRoute = createRoute({
       description: "The post with the given id was deleted",
       content: {
         "application/json": {
-          schema: postSelectSchema,
+          schema: postResponseSchema,
         },
       },
     },
