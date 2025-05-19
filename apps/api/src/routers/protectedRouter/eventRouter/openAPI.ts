@@ -5,15 +5,19 @@ import {
 } from "@/db/handlers/eventHandler";
 import { createRoute, z } from "@hono/zod-openapi";
 
+const eventResponseSchema = eventSelectSchema.openapi("Event");
+
 /**
  * @var The zod schema for the events get route's query string
  */
-const eventGetQuerySchema = z.object({
-  "user-id": z.string().optional(),
-  "with-ticket-count": z.coerce.boolean().optional(),
-  limit: z.coerce.number().min(0).max(100).optional(),
-  page: z.coerce.number().min(1).optional(),
-});
+const eventGetQuerySchema = z
+  .object({
+    "user-id": z.string().optional(),
+    "with-ticket-count": z.coerce.boolean().optional(),
+    limit: z.coerce.number().min(0).max(100).optional(),
+    page: z.coerce.number().min(1).optional(),
+  })
+  .openapi("Event query");
 /**
  * @description
  * The type for event's get query string
@@ -36,7 +40,7 @@ const eventGetRoute = createRoute({
       description: "The new event was created",
       content: {
         "application/json": {
-          schema: eventSelectSchema.array(),
+          schema: eventResponseSchema.array(),
         },
       },
     },
@@ -59,7 +63,7 @@ const eventGetByIdRoute = createRoute({
       description: "Found an event with the given id",
       content: {
         "application/json": {
-          schema: eventSelectSchema,
+          schema: eventResponseSchema,
         },
       },
     },
@@ -87,7 +91,8 @@ const eventPostRoute = createRoute({
           schema: eventInsertSchema
             .omit({ creatorId: true })
             .extend({ startDate: z.coerce.date(), endDate: z.coerce.date() })
-            .strict(),
+            .strict()
+            .openapi("Event Post request"),
         },
       },
     },
@@ -125,7 +130,8 @@ const eventPutRoute = createRoute({
               startDate: z.coerce.date().optional(),
               endDate: z.coerce.date().optional(),
             })
-            .strict(),
+            .strict()
+            .openapi("Event update request"),
         },
       },
     },
@@ -162,7 +168,7 @@ const eventDeleteRoute = createRoute({
       description: "Event with the given id was deleted",
       content: {
         "application/json": {
-          schema: eventSelectSchema,
+          schema: eventResponseSchema,
         },
       },
     },

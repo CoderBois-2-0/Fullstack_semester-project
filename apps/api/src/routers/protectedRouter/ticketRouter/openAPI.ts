@@ -6,15 +6,19 @@ import {
   ticketUpdateSchema,
 } from "@/db/handlers/ticketHandler";
 
+const ticketResponseSchema = ticketSelectSchema.openapi("Ticket reponse");
+
 /**
  * @var The zod schema for the get route's query string
  */
-const ticketGetQuerySchema = z.object({
-  "user-id": z.string().optional(),
-  "with-event": z.coerce.boolean(),
-  limit: z.coerce.number().min(0).max(100).optional(),
-  page: z.coerce.number().min(1).optional(),
-});
+const ticketGetQuerySchema = z
+  .object({
+    "user-id": z.string().optional(),
+    "with-event": z.coerce.boolean(),
+    limit: z.coerce.number().min(0).max(100).optional(),
+    page: z.coerce.number().min(1).optional(),
+  })
+  .openapi("Ticket query");
 
 /**
  * @description
@@ -39,7 +43,7 @@ const ticketGetRoute = createRoute({
       description: "All tickets where retrieved",
       content: {
         "application/json": {
-          schema: ticketSelectSchema.array(),
+          schema: ticketResponseSchema.array(),
         },
       },
     },
@@ -59,7 +63,7 @@ const ticketGetByIdRoute = createRoute({
       description: "Found the ticket with the given id",
       content: {
         "application/json": {
-          schema: ticketSelectSchema,
+          schema: ticketResponseSchema,
         },
       },
     },
@@ -84,7 +88,10 @@ const ticketPostRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: ticketInsertSchema.omit({ userId: true }).strict(),
+          schema: ticketInsertSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Ticket post request"),
         },
       },
     },
@@ -94,7 +101,7 @@ const ticketPostRoute = createRoute({
       description: "The new ticket was created",
       content: {
         "application/json": {
-          schema: ticketSelectSchema,
+          schema: ticketResponseSchema,
         },
       },
     },
@@ -117,7 +124,10 @@ const ticketPutRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: ticketUpdateSchema.omit({ userId: true }).strict(),
+          schema: ticketUpdateSchema
+            .omit({ userId: true })
+            .strict()
+            .openapi("Ticket put request"),
         },
       },
     },
@@ -127,7 +137,7 @@ const ticketPutRoute = createRoute({
       description: "The ticket with the given id was updated",
       content: {
         "application/json": {
-          schema: ticketSelectSchema,
+          schema: ticketResponseSchema,
         },
       },
     },
@@ -153,7 +163,7 @@ const ticketDeleteRoute = createRoute({
       description: "The ticket with the given id was deleted",
       content: {
         "application/json": {
-          schema: ticketSelectSchema,
+          schema: ticketResponseSchema,
         },
       },
     },
