@@ -6,7 +6,6 @@ import Footer from "@/components/footer";
 import EventGrid from "@/components/eventgrid";
 import EventCard from "@/components/eventcard";
 import type { Event } from "@/components/eventcard";
-import "../App.css";
 
 // Sample event data - replace with data from your database
 const events: Event[] = [

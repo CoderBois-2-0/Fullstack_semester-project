@@ -52,8 +52,8 @@ const Navbar: React.FC = () => {
             <Button sx={{ mr: 1 }}>Events</Button>
             </Link>
             <Button sx={{ mr: 1 }}>Venues</Button>
-            <Link to='/'>
-              <Button variant="contained" color='warning'>My Account</Button>
+            <Link to='/login'>
+              <Button variant="contained" color='info'>Log In</Button>
             </Link>
           </Box>
         ) : (
