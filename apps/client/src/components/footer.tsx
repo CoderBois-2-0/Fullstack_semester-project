@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
       }}>
         <Box sx={{ mb: { xs: 2, md: 0 } }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            TicketPlace
+            Queue Up
           </Typography>
           <Typography variant="body2" sx={{ mt: 1 }}>
             © {new Date().getFullYear()} All rights reserved.

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { Box, Typography, Button, useTheme, useMediaQuery } from '@mui/material';
 
 interface HeroBannerProps {
@@ -64,6 +65,7 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
           flexWrap: 'wrap', 
           justifyContent: { xs: 'center', md: 'flex-start' } 
         }}>
+          <Link to="/events">
           <Button 
             variant="contained" 
             color="primary" 
@@ -77,6 +79,7 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
           >
             Find Events
           </Button>
+          </Link>
           <Button 
             variant="outlined" 
             size="large"
