@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState } from "react";
 import { SiSteam, SiDiscord } from "react-icons/si";
-import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Box,
   Container,
@@ -25,9 +24,6 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import "@/App.css";
 
-function RouteComponent() {
-  return <div>Hello "/signup"!</div>;
-}
 const SignupPage: React.FC = () => {
   const authClient = new AuthClient();
 
