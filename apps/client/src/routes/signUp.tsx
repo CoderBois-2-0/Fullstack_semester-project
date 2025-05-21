@@ -236,6 +236,6 @@ const SignupPage: React.FC = () => {
 
 export default SignupPage;
 
-export const Route = createFileRoute('/signup')({
+export const Route = createFileRoute('/signUp')({
   component: SignupPage
 });
