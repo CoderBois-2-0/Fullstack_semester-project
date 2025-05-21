@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Box } from '@mui/material';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import HeroBanner from '@/components/herobanner';
+import HeroBanner from '@/components/heroBanner';
 import '../App.css';
 
 const HomePage: React.FC = () => {

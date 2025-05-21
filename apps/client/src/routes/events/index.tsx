@@ -3,9 +3,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Box, Container, Typography } from "@mui/material";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import EventGrid from "@/components/eventgrid";
-import EventCard from "@/components/eventcard";
-import type { Event } from "@/components/eventcard";
+import EventGrid from "@/components/eventGrid";
+import EventCard from "@/components/eventCard";
+import type { Event } from "@/components/eventCard";
 
 // Sample event data - replace with data from your database
 const events: Event[] = [

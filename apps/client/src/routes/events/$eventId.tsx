@@ -4,7 +4,7 @@ import { Box, Container, Typography, Button, Paper } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import type { Event } from "@/components/eventcard";
+import type { Event } from "@/components/eventCard";
 
 // Service function to fetch event data by ID
 const getEventById = async (id: string): Promise<Event | null> => {
