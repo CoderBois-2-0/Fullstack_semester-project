@@ -1,13 +1,16 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 import { Bindings } from "@/routers/index";
-import { TProtectedVariables } from "./index";
+import { TProtectedVariables } from "../index";
+import { TicketHandler } from "@/db/handlers/ticketHandler";
 import {
-  TicketHandler,
-  ticketInsertSchema,
-  ticketUpdateSchema,
-} from "@/db/handlers/ticketHandler";
+  ticketGetRoute,
+  ticketGetByIdRoute,
+  ticketPostRoute,
+  ticketPutRoute,
+  ticketDeleteRoute,
+} from "./openAPI";
+import { createMiddleware } from "hono/factory";
 
 /**
  * @description
@@ -22,41 +25,29 @@ interface ITicketVariables extends TProtectedVariables {
 }
 
 /**
- * @var The validator for the post request for events
- */
-const ticketPostValidator = zValidator(
-  "json",
-  ticketInsertSchema.omit({ userId: true }).strict(),
-);
-
-/**
- * @var The validator for the put request for events
- */
-const ticketPutValidator = zValidator(
-  "json",
-  ticketUpdateSchema.omit({ userId: true }).strict(),
-);
-
-/**
  * @var The ticket router
  */
-const ticketRouter = new Hono<{
+const ticketRouter = new OpenAPIHono<{
   Bindings: Bindings;
   Variables: ITicketVariables;
-}>()
-  .use(async (c, next) => {
-    c.set("ticketHandler", new TicketHandler(c.env.DB_URL));
+}>();
 
-    await next();
-  })
-  .get("/", async (c) => {
+ticketRouter.use(async (c, next) => {
+  c.set("ticketHandler", new TicketHandler(c.env.DB_URL));
+
+  await next();
+});
+
+ticketRouter
+  .openapi(ticketGetRoute, async (c) => {
+    const query = c.req.valid("query");
     const tickethandler = c.get("ticketHandler");
 
-    const tickets = await tickethandler.getTickets();
+    const tickets = await tickethandler.getTickets(query);
 
     return c.json({ tickets });
   })
-  .get("/:ticketId", async (c) => {
+  .openapi(ticketGetByIdRoute, async (c) => {
     const ticketId = c.req.param("ticketId");
     const ticketHandler = c.get("ticketHandler");
 
@@ -67,7 +58,7 @@ const ticketRouter = new Hono<{
 
     return c.json({ ticket });
   })
-  .post("/", ticketPostValidator, async (c) => {
+  .openapi(ticketPostRoute, async (c) => {
     const user = c.get("jwtPayload");
     const ticketHandler = c.get("ticketHandler");
     const newTicket = c.req.valid("json");
@@ -82,7 +73,7 @@ const ticketRouter = new Hono<{
 
     return c.json({ ticket });
   })
-  .put("/:ticketId", ticketPutValidator, async (c) => {
+  .openapi(ticketPutRoute, async (c) => {
     const ticketHandler = c.get("ticketHandler");
     const ticketId = c.req.param("ticketId");
     const updatedTicket = c.req.valid("json");
@@ -94,7 +85,7 @@ const ticketRouter = new Hono<{
 
     return c.json({ ticket });
   })
-  .delete("/:ticketId", async (c) => {
+  .openapi(ticketDeleteRoute, async (c) => {
     const ticketHandler = c.get("ticketHandler");
     const ticketId = c.req.param("ticketId");
 

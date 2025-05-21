@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_eMCLrCWPYj
 createdAt: 2025-05-09T19:58:00.625476523
-updatedAt: 2025-05-12T19:30:10.009709493
+updatedAt: 2025-05-15T14:35:49.887412731
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_wGkWYPqXgh
 authentication: {}
@@ -14,5 +14,5 @@ headers: []
 method: GET
 name: find event by id
 sortPriority: 1000.0
-url: ${[ URL ]}/events/b2f42bce-dda7-4dee-b6d2-ac7c334a2171
+url: ${[ URL ]}/events/438a5d11-a385-4595-b680-b0cd5e52e5f8
 urlParameters: []
