@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "api:dev": "pnpm --filter api dev"
+    "api:dev": "pnpm --filter api dev",
+    "client:dev": "pnpm --filter client dev"
   },
   "keywords": [],
   "author": "",
