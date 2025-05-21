@@ -1,13 +1,15 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 import { Bindings } from "@/routers/index";
-import { TProtectedVariables } from "./index";
+import { TProtectedVariables } from "@/routers/protectedRouter/index";
+import { CommentHandler } from "@/db/handlers/commentHandler";
 import {
-  CommentHandler,
-  commentInsertSchema,
-  commentUpdateSchema,
-} from "@/db/handlers/commentHandler";
+  commentDeleteRoute,
+  commentGetByIdRoute,
+  commentGetRoute,
+  commentPostRoute,
+  commentPutRoute,
+} from "./openAPI";
 
 /**
  * @description
@@ -22,41 +24,28 @@ interface ICommentVariables extends TProtectedVariables {
 }
 
 /**
- * @var The validator for the post request for comments
- */
-const commentPostValidator = zValidator(
-  "json",
-  commentInsertSchema.omit({ userId: true }).strict(),
-);
-
-/**
- * @var The validator for the put request for comments
- */
-const commentPutValidator = zValidator(
-  "json",
-  commentUpdateSchema.omit({ userId: true }).strict(),
-);
-
-/**
  * @var The ticket router
  */
-const commentRouter = new Hono<{
+const commentRouter = new OpenAPIHono<{
   Bindings: Bindings;
   Variables: ICommentVariables;
-}>()
-  .use(async (c, next) => {
-    c.set("commentHandler", new CommentHandler(c.env.DB_URL));
+}>();
 
-    await next();
-  })
-  .get("/", async (c) => {
+commentRouter.use(async (c, next) => {
+  c.set("commentHandler", new CommentHandler(c.env.DB_URL));
+
+  await next();
+});
+
+commentRouter
+  .openapi(commentGetRoute, async (c) => {
     const commentHandler = c.get("commentHandler");
 
     const comment = await commentHandler.getComments();
 
     return c.json({ comment });
   })
-  .get("/:commentId", async (c) => {
+  .openapi(commentGetByIdRoute, async (c) => {
     const commentId = c.req.param("commentId");
     const commentHandler = c.get("commentHandler");
 
@@ -67,7 +56,7 @@ const commentRouter = new Hono<{
 
     return c.json({ comment });
   })
-  .post("/", commentPostValidator, async (c) => {
+  .openapi(commentPostRoute, async (c) => {
     const user = c.get("jwtPayload");
     const commentHandler = c.get("commentHandler");
     const newComment = c.req.valid("json");
@@ -82,7 +71,7 @@ const commentRouter = new Hono<{
 
     return c.json({ comment });
   })
-  .put("/:commentId", commentPutValidator, async (c) => {
+  .openapi(commentPutRoute, async (c) => {
     const commentHandler = c.get("commentHandler");
     const commentId = c.req.param("commentId");
     const updatedComment = c.req.valid("json");
@@ -97,7 +86,7 @@ const commentRouter = new Hono<{
 
     return c.json({ comment });
   })
-  .delete("/:commentId", async (c) => {
+  .openapi(commentDeleteRoute, async (c) => {
     const commentHandler = c.get("commentHandler");
     const commentId = c.req.param("commentId");
 

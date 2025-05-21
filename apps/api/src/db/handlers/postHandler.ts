@@ -1,9 +1,16 @@
 import { eq } from "drizzle-orm";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import {
+  createSelectSchema,
+  createInsertSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { postTable } from "@/db/schema";
+
+const postSelectSchema = createSelectSchema(postTable);
+type TPost = z.infer<typeof postSelectSchema>;
 
 /**
  * @description
@@ -93,16 +100,11 @@ class PostHandler {
    * @param updatedPost - The data to update the post with
    * @returns - The updated post with all it's fields
    */
-  async updatePost(
-    postId: string,
-    updatedPost: TPostUpdate,
-  ) {
+  async updatePost(postId: string, updatedPost: TPostUpdate) {
     const postsReturned = await this.#client
       .update(this.#table)
       .set(updatedPost)
-      .where(
-        eq(this.#table.id, postId),
-      )
+      .where(eq(this.#table.id, postId))
       .returning();
 
     return postsReturned.at(0);
@@ -117,13 +119,11 @@ class PostHandler {
   async deletePost(postId: string) {
     const postsReturned = await this.#client
       .delete(this.#table)
-      .where(
-        eq(this.#table.id, postId),
-      )
+      .where(eq(this.#table.id, postId))
       .returning();
 
     return postsReturned.at(0);
   }
 }
 
-export { PostHandler, postInsertSchema, postUpdateSchema };
+export { PostHandler, postSelectSchema, postInsertSchema, postUpdateSchema };
