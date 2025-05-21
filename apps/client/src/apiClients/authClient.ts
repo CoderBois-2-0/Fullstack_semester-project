@@ -10,19 +10,13 @@ class AuthClient {
   }
 
   async signUp(email: string, password: string, confirmPassword: string) {
-    const response = await this.#baseClient.post(`${this.#basePath}/sign-up`, {
+    return this.#baseClient.post(`${this.#basePath}/sign-up`, {
       role: "GUEST",
       username: "default",
       email,
       password,
       confirmPassword,
     });
-
-    if (response.status !== 200) {
-      return;
-    }
-
-    const data = await response.json();
   }
 }
 
