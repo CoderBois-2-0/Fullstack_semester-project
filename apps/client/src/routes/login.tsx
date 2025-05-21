@@ -169,7 +169,7 @@ const LoginPage: React.FC = () => {
               <Box sx={{ textAlign: 'center', mt: 4 }}>
                 <Typography variant="body2">
                   Don't have an account?{' '}
-                  <Link to="/signUp" className="link-style">
+                  <Link to="/signup" className="link-style">
                     Sign up
                   </Link>
                 </Typography>
