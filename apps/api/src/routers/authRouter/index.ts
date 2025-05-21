@@ -34,6 +34,8 @@ authRouter
 
     const { confirmPassword: _confirmPassword, ...newUser } =
       c.req.valid("json");
+      console.log(newUser);
+      
 
     const hashedPassword = await hash(newUser.password);
     const createdUser = await userHandler.createUser({

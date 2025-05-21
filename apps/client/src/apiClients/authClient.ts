@@ -6,7 +6,7 @@ class AuthClient {
 
   constructor() {
     this.#baseClient = new APIClient();
-    this.#basePath = "/auth";
+    this.#basePath = "auth";
   }
 
   async signUp(email: string, password: string, confirmPassword: string) {

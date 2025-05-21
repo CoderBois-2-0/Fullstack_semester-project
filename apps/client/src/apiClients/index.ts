@@ -6,7 +6,13 @@ class APIClient {
   }
 
   async get(path: string) {
-    const response = await fetch(`${this.#baseURL}/${path}`);
+    const response = await fetch(`${this.#baseURL}/${path}`, {
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+      },
+      method: "get",
+    });
     const data = await response.json();
 
     return data;
@@ -15,6 +21,10 @@ class APIClient {
   async post(path: string, body: Object) {
     const bodyString = JSON.stringify(body);
     const response = await fetch(`${this.#baseURL}/${path}`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
       method: "post",
       body: bodyString,
     });
