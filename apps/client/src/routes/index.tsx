@@ -1,9 +1,9 @@
 import React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Box } from '@mui/material';
-import Navbar from '../components/navbar';
-import Footer from '../components/footer';
-import HeroBanner from '../components/herobanner';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
+import HeroBanner from '@/components/herobanner';
 import '../App.css';
 
 const HomePage: React.FC = () => {

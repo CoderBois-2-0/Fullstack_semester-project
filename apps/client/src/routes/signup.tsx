@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SiSteam, SiDiscord } from 'react-icons/si';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { 
   Box, 
@@ -15,8 +16,8 @@ import {
   Checkbox,
   FormControlLabel
 } from '@mui/material';
-import Navbar from '../components/navbar';
-import Footer from '../components/footer';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
 import '../App.css';
 
 // Import for icons
@@ -193,11 +194,24 @@ const SignupPage: React.FC = () => {
                 <Button
                   fullWidth
                   variant="outlined"
-                  color="primary"
-                  startIcon={<Google />}
+                  color="inherit"
+                  startIcon={<SiSteam />}
                   sx={{ py: 1.2 }}
                 >
-                  Continue with Google
+                Continue with Steam
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<SiDiscord />}
+                  sx={{
+                    py: 1.2,
+                    color: '#8f9eff',
+                    borderColor: '#8f9eff'
+                  }}
+                >
+                  Continue with Discord
                 </Button>
               </Stack>
               
