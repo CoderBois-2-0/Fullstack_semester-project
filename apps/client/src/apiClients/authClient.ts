@@ -18,6 +18,13 @@ class AuthClient {
       confirmPassword,
     });
   }
+
+  async signIn(email: string, password: string) {
+    return this.#baseClient.post(`${this.#basePath}/sign-in`, {
+      email,
+      password,
+    });
+  }
 }
 
 export default AuthClient;

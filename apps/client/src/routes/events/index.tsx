@@ -50,11 +50,11 @@ const events: React.FC = () => {
               renderItem={renderEventCard}
               onItemClick={handleEventClick}
             />
-          ) : (<>
-            <p>No events</p>
-            <p>{events.isError ? events.error.message : "Loading..."}</p>
+          ) : (
+            <>
+              <p>No events</p>
+              <p>{events.isError ? events.error.message : "Loading..."}</p>
             </>
-
           )}
         </Container>
       </Box>

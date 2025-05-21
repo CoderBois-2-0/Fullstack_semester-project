@@ -5,7 +5,6 @@ import {
   CardMedia,
   CardContent,
   Typography,
-  Chip,
   Button,
   CardActions,
 } from "@mui/material";
@@ -28,7 +27,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       day: "numeric",
     };
 
-    return date.toLocaleDateString("en-US", options);
+    return date.toLocaleDateString("da-DK", options);
   };
 
   const handleCardClick = () => {
@@ -66,7 +65,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       <CardMedia
         component="img"
         height={180}
-        image="/default-event-image"
+        image="/default-event-image.png"
         alt={event.name}
       />
 
