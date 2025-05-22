@@ -10,6 +10,7 @@ import {
   eventPostRoute,
   eventPutRoute,
 } from "./openAPI";
+import { env } from "hono/adapter";
 
 /**
  * @description

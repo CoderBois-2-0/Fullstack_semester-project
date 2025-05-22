@@ -1,12 +1,25 @@
-import React from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, type ReactNode } from "@tanstack/react-router";
+import { type UseQueryResult } from "@tanstack/react-query";
 import { Box, Container, Typography, Button, Paper } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useEvent } from "@/hooks/eventHook";
 import type { IEvent } from "@/apiClients/eventClient";
+import CardSkeleton from "@/components/cardSkeleton";
 
-const EventPage = (props: { event: IEvent }) => {
+function QueryRenderer<T>(props: {
+  query: UseQueryResult<T, Error>;
+  renderFn: (data: T) => ReactNode;
+}) {
+  if (props.query.data) {
+    return props.renderFn(props.query.data);
+  } else {
+    console.log(props.query.error?.message);
+    return <p>No Event</p>;
+  }
+}
+
+const EventDetail = (props: { event: IEvent }) => {
   const event = props.event;
   return (
     <>
@@ -74,34 +87,47 @@ const EventPage = (props: { event: IEvent }) => {
 };
 
 // Main component that displays event details
-const EventDetail = () => {
+const EventPage = () => {
   // Extract event ID from URL
   const { eventId } = Route.useParams();
   const eventQuery = useEvent(eventId);
 
-  const event = eventQuery.data;
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {eventQuery.isLoading && <p>Is loading</p>}
-
-      {!eventQuery.isLoading && eventQuery.data ? (
-        <EventPage event={eventQuery.data}></EventPage>
+    <Box
+      display="flex"
+      flexDirection="column"
+      minHeight="100vh"
+      pt={2}
+      px={35}
+      gap={2}
+    >
+      {eventQuery.isLoading ? (
+        <CardSkeleton />
       ) : (
-        <p>No event found</p>
+        <QueryRenderer
+          query={eventQuery}
+          renderFn={(event) => <EventDetail event={event} />}
+        />
       )}
 
-      <Link to="/events">
-        <Button startIcon={<ArrowBackIcon />} variant="outlined" sx={{ mb: 4 }}>
-          Back to Events
-        </Button>
-      </Link>
+      {!eventQuery.isLoading && (
+        <Link to="/events">
+          <Button
+            startIcon={<ArrowBackIcon />}
+            variant="outlined"
+            sx={{ mb: 4 }}
+          >
+            Back to Events
+          </Button>
+        </Link>
+      )}
     </Box>
   );
 };
 
-export default EventDetail;
+export default EventPage;
 
 // Route definition for TanStack Router
 export const Route = createFileRoute("/events/$eventId")({
-  component: EventDetail,
+  component: EventPage,
 });

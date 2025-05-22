@@ -43,9 +43,9 @@ class EventClient {
   async findEventById(eventId: string) {
     const eventResponse = (await this.#baseClient.get(
       `${this.#basePath}/${eventId}`,
-    )) as { event: IEventResponse };
+    )) as IEventResponse;
 
-    return this.#transform(eventResponse.event);
+    return this.#transform(eventResponse);
   }
 
   /**

@@ -1,4 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { env } from "hono/adapter";
 import { jwt, type JwtVariables } from "hono/jwt";
 
 import { AUTH_COOKIE_NAME } from "@/auth";

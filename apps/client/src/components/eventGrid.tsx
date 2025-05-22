@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
+import CardSkeleton from "./cardSkeleton";
 
 // The component only accepts what it needs to render the grid
 interface EventGridProps<T> {
@@ -16,6 +17,7 @@ const EventGrid = <T extends { id: string }>({
   onItemClick,
   renderItem,
 }: EventGridProps<T>) => {
+  // Render loading skeletons when data is being fetched
   return (
     <Box
       sx={{
@@ -29,17 +31,7 @@ const EventGrid = <T extends { id: string }>({
       }}
     >
       {isLoading
-        ? [...Array(6)].map((_, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: "100%",
-                height: "300px",
-                bgcolor: "#f0f0f0",
-                borderRadius: 2,
-              }}
-            />
-          ))
+        ? [...Array(6)].map((_, index) => <CardSkeleton key={index} />)
         : data.map((item) => (
             <Box key={item.id}>{renderItem(item, onItemClick)}</Box>
           ))}

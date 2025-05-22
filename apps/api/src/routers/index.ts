@@ -1,3 +1,4 @@
+import { env } from "hono/adapter";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
@@ -30,8 +31,9 @@ interface Bindings {
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 app.use(async (c, next) => {
+  const e = env<{ CORS_ORIGIN: string }>(c);
   const corsHandler = cors({
-    origin: c.env.CORS_ORIGIN,
+    origin: e.CORS_ORIGIN,
     credentials: true,
   });
 

@@ -39,18 +39,27 @@ const events: React.FC = () => {
         </Container>
 
         {/* EventGrid Component */}
+        {/* EventGrid Component */}
         <Container maxWidth="lg" sx={{ mb: 6 }}>
-          {events.data ? (
-            <EventGrid
-              data={events.data}
-              renderItem={renderEventCard}
-              onItemClick={handleEventClick}
-            />
-          ) : (
-            <>
-              <p>No events</p>
-              <p>{events.isError ? events.error.message : "Loading..."}</p>
-            </>
+          <EventGrid
+            data={events.data || []}
+            isLoading={events.isLoading}
+            renderItem={renderEventCard}
+            onItemClick={handleEventClick}
+          />
+
+          {/* Show error message if there's an error */}
+          {events.isError && (
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <p>Error: {events.error.message}</p>
+            </Box>
+          )}
+
+          {/* Show "no events" message only when not loading and no data */}
+          {!events.isLoading && events.data && events.data.length === 0 && (
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <p>No events available</p>
+            </Box>
           )}
         </Container>
       </Box>

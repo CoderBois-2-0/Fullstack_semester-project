@@ -7,11 +7,11 @@ class APIClient {
 
   async get(path: string) {
     const response = await fetch(`${this.#baseURL}/${path}`, {
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-      },
       method: "get",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
     });
     const data = await response.json();
 
@@ -21,11 +21,11 @@ class APIClient {
   async post(path: string, body: Object) {
     const bodyString = JSON.stringify(body);
     const response = await fetch(`${this.#baseURL}/${path}`, {
-      credentials: "include",
+      method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      method: "post",
+      credentials: "include",
       body: bodyString,
     });
     const data = await response.json();

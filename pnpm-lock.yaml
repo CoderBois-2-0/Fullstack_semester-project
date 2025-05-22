@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.14.2
+        version: 1.14.2(hono@4.7.9)
       '@hono/swagger-ui':
         specifier: ^0.5.1
         version: 0.5.1(hono@4.7.9)
@@ -19,6 +22,9 @@ importers:
       '@neondatabase/serverless':
         specifier: ^1.0.0
         version: 1.0.0
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       dotenv-cli:
         specifier: ^8.0.0
         version: 8.0.0
@@ -47,6 +53,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.1
         version: 0.31.1
+      tsx:
+        specifier: ^4.19.4
+        version: 4.19.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -670,6 +679,12 @@ packages:
 
   '@fontsource/press-start-2p@5.2.5':
     resolution: {integrity: sha512-MmGLqhkv0kuoyeGgGkquEMRxJP6auc6918bKd8uTWP2beXMWLZZwCfXCqmskFLf0XYbtbzxuRXLjTnQBeTwsMQ==}
+
+  '@hono/node-server@1.14.2':
+    resolution: {integrity: sha512-GHjpOeHYbr9d1vkID2sNUYkl5IxumyhDrUJB7wBp7jvqYwPFt+oNKsAPBRcdSbV7kIrXhouLE199ks1QcK4r7A==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@hono/swagger-ui@0.5.1':
     resolution: {integrity: sha512-XpUCfszLJ9b1rtFdzqOSHfdg9pfBiC2J5piEjuSanYpDDTIwpMz0ciiv5N3WWUaQpz9fEgH8lttQqL41vIFuDA==}
@@ -2778,6 +2793,10 @@ snapshots:
   '@fastify/busboy@2.1.1': {}
 
   '@fontsource/press-start-2p@5.2.5': {}
+
+  '@hono/node-server@1.14.2(hono@4.7.9)':
+    dependencies:
+      hono: 4.7.9
 
   '@hono/swagger-ui@0.5.1(hono@4.7.9)':
     dependencies:
