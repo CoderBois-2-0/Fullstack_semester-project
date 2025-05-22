@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
-  Box 
+  Box,
+  Skeleton
 } from '@mui/material';
 
 // The component only accepts what it needs to render the grid
@@ -32,15 +33,19 @@ const EventGrid = <T extends { id: string }>({
         gap: 3
       }}>
         {[...Array(6)].map((_, index) => (
-          <Box 
-            key={index}
-            sx={{ 
-              width: '100%', 
-              height: '300px', 
-              bgcolor: '#f0f0f0',
-              borderRadius: 2
-            }}
-          />
+          <Box key={index}>
+            <Skeleton 
+              variant="rectangular" 
+              width="100%" 
+              height={300}
+              sx={{ borderRadius: 2 }}
+            />
+            <Box sx={{ pt: 1 }}>
+              <Skeleton width="80%" height={24} />
+              <Skeleton width="60%" height={20} />
+              <Skeleton width="40%" height={20} />
+            </Box>
+          </Box>
         ))}
       </Box>
     );
