@@ -21,6 +21,7 @@ async function setJWTCookie(c: Context, jwtSecret: string, jwtPayload: TUser) {
   const jwtToken = await sign(safeJWtPayload, jwtSecret);
 
   setCookie(c, AUTH_COOKIE_NAME, jwtToken, {
+    maxAge: 60 * 60 * 24 * 7, // 1 week
     path: "/",
     httpOnly: true,
     secure: false, // should be set with an env

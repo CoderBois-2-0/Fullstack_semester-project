@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_k9DGayhC2d
 createdAt: 2025-05-09T19:39:55.147682257
-updatedAt: 2025-05-16T08:09:53.898746388
+updatedAt: 2025-05-21T14:09:01.477220837
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_wGkWYPqXgh
 authentication: {}
@@ -16,7 +16,7 @@ name: get all events
 sortPriority: 0.0
 url: ${[ URL ]}/events
 urlParameters:
-- enabled: true
+- enabled: false
   name: with-ticket-count
   value: 'true'
   id: yIbHP3KBW7
@@ -31,4 +31,4 @@ urlParameters:
 - enabled: true
   name: ''
   value: ''
-  id: ntEbqk2E8c
+  id: NCm5bIiQFG
