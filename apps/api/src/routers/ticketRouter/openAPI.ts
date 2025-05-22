@@ -119,7 +119,7 @@ const ticketPutRoute = createRoute({
     "Will update the ticket with the given id, based on the provided body",
   tags: ["Tickets"],
   method: "put",
-  path: "/",
+  path: "/:ticketId",
   request: {
     body: {
       content: {

@@ -1,8 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { Bindings } from "@/routers/index";
-import { TProtectedVariables } from "../index";
-import { TicketHandler } from "@/db/handlers/ticketHandler";
 import {
   ticketGetRoute,
   ticketGetByIdRoute,
@@ -10,35 +7,22 @@ import {
   ticketPutRoute,
   ticketDeleteRoute,
 } from "./openAPI";
-import { createMiddleware } from "hono/factory";
+import { ITicketVariables } from "./index";
+import { jwtMiddleware, TJWTVariables } from "@/auth";
+import { IHonoProperties } from "..";
 
-/**
- * @description
- * The cloudflare variables for the event router,
- * extends the protected variables from the protected router
- */
-interface ITicketVariables extends TProtectedVariables {
-  /**
-   * @property The handler for tickets
-   */
-  ticketHandler: TicketHandler;
-}
+interface IProtectedTicketHVariables extends ITicketVariables, TJWTVariables {}
 
 /**
  * @var The ticket router
  */
-const ticketRouter = new OpenAPIHono<{
-  Bindings: Bindings;
-  Variables: ITicketVariables;
-}>();
+const protectedRouter = new OpenAPIHono<
+  IHonoProperties<IProtectedTicketHVariables>
+>();
 
-ticketRouter.use(async (c, next) => {
-  c.set("ticketHandler", new TicketHandler(c.env.DB_URL));
+protectedRouter.use(jwtMiddleware);
 
-  await next();
-});
-
-ticketRouter
+protectedRouter
   .openapi(ticketGetRoute, async (c) => {
     const query = c.req.valid("query");
     const tickethandler = c.get("ticketHandler");
@@ -94,4 +78,4 @@ ticketRouter
     return c.json({ ticket });
   });
 
-export default ticketRouter;
+export default protectedRouter;
