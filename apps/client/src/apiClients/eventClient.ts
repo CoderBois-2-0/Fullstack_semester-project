@@ -37,11 +37,28 @@ class EventClient {
       events: IEventResponse[];
     };
 
-    return events.events.map((eventResponse) => ({
+    return events.events.map((eventResponse) => this.#transform(eventResponse));
+  }
+
+  async findEventById(eventId: string) {
+    const eventResponse = (await this.#baseClient.get(
+      `${this.#basePath}/${eventId}`,
+    )) as { event: IEventResponse };
+
+    return this.#transform(eventResponse.event);
+  }
+
+  /**
+   * Transforms an eventReponse to an event
+   * @param eventResponse - The event reponse to transform to an event
+   * @returns - An event based on the event response
+   */
+  #transform(eventResponse: IEventResponse): IEvent {
+    return {
       ...eventResponse.event,
       startDate: new Date(eventResponse.event.startDate),
       endDate: new Date(eventResponse.event.endDate),
-    }));
+    };
   }
 }
 

@@ -39,10 +39,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {/* Navbar Component */}
-      <Navbar />
-
-      {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
@@ -187,9 +183,6 @@ const LoginPage: React.FC = () => {
           </Paper>
         </Container>
       </Box>
-
-      {/* Footer Component */}
-      <Footer />
     </Box>
   );
 };

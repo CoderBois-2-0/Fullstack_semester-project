@@ -1,7 +1,5 @@
-import React from 'react';
-import { 
-  Box 
-} from '@mui/material';
+import React from "react";
+import { Box } from "@mui/material";
 
 // The component only accepts what it needs to render the grid
 interface EventGridProps<T> {
@@ -12,55 +10,39 @@ interface EventGridProps<T> {
 }
 
 // Generic event grid component that can be used with any data type
-const EventGrid = <T extends { id: string }>({ 
-  data, 
-  isLoading = false, 
+const EventGrid = <T extends { id: string }>({
+  data,
+  isLoading = false,
   onItemClick,
-  renderItem
+  renderItem,
 }: EventGridProps<T>) => {
-
-  // Render loading skeletons when data is being fetched
-  if (isLoading) {
-    return (
-      <Box sx={{ 
-        display: 'grid', 
-        gridTemplateColumns: { 
-          xs: '1fr',             // 1 column on mobile
-          sm: 'repeat(2, 1fr)',  // 2 columns on tablet
-          md: 'repeat(3, 1fr)'   // 3 columns on desktop
-        },
-        gap: 3
-      }}>
-        {[...Array(6)].map((_, index) => (
-          <Box 
-            key={index}
-            sx={{ 
-              width: '100%', 
-              height: '300px', 
-              bgcolor: '#f0f0f0',
-              borderRadius: 2
-            }}
-          />
-        ))}
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ 
-      display: 'grid', 
-      gridTemplateColumns: { 
-        xs: '1fr',             // 1 column on mobile
-        sm: 'repeat(2, 1fr)',  // 2 columns on tablet
-        md: 'repeat(3, 1fr)'   // 3 columns on desktop
-      },
-      gap: 3
-    }}>
-      {data.map(item => (
-        <Box key={item.id}>
-          {renderItem(item, onItemClick)}
-        </Box>
-      ))}
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "1fr", // 1 column on mobile
+          sm: "repeat(2, 1fr)", // 2 columns on tables
+          md: "repeat(3, 1fr)", // 3 columns on desktop
+        },
+        gap: 3,
+      }}
+    >
+      {isLoading
+        ? [...Array(6)].map((_, index) => (
+            <Box
+              key={index}
+              sx={{
+                width: "100%",
+                height: "300px",
+                bgcolor: "#f0f0f0",
+                borderRadius: 2,
+              }}
+            />
+          ))
+        : data.map((item) => (
+            <Box key={item.id}>{renderItem(item, onItemClick)}</Box>
+          ))}
     </Box>
   );
 };

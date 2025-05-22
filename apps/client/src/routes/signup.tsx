@@ -44,10 +44,6 @@ const SignupPage: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {/* Navbar Component */}
-      <Navbar />
-
-      {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
@@ -106,16 +102,16 @@ const SignupPage: React.FC = () => {
                 slotProps={{
                   input: {
                     endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  )
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
                   },
                 }}
               />
@@ -233,9 +229,6 @@ const SignupPage: React.FC = () => {
           </Paper>
         </Container>
       </Box>
-
-      {/* Footer Component */}
-      <Footer />
     </Box>
   );
 };

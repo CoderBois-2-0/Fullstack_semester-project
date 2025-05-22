@@ -3,12 +3,21 @@ import React from "react";
 import EventClient from "@/apiClients/eventClient";
 import { queryData } from "./dataHook";
 
-function useEvents() {
-  const eventClient = new EventClient();
+const QUERY_KEY = "events";
+const eventClient = new EventClient();
 
-  const query = queryData(["events"], () => eventClient.getEvents());
+function useEvent(eventId: string) {
+  const query = queryData([QUERY_KEY, eventId], () =>
+    eventClient.findEventById(eventId),
+  );
 
   return query;
 }
 
-export default useEvents;
+function useEvents() {
+  const query = queryData([QUERY_KEY], () => eventClient.getEvents());
+
+  return query;
+}
+
+export { useEvent, useEvents };

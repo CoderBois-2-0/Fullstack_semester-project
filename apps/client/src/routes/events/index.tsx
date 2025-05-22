@@ -8,7 +8,7 @@ import Footer from "@/components/footer";
 import EventGrid from "@/components/eventGrid";
 import EventCard from "@/components/eventCard";
 import { type IEvent } from "@/apiClients/eventClient";
-import useEvents from "@/hooks/eventHook";
+import { useEvents } from "@/hooks/eventHook";
 
 const events: React.FC = () => {
   const navigate = useNavigate();
@@ -30,10 +30,6 @@ const events: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {/* Navbar Component */}
-      <Navbar />
-
-      {/* Main Content */}
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         {/* Page Title */}
         <Container maxWidth="lg" sx={{ mt: 4, mb: 3 }}>
@@ -58,9 +54,6 @@ const events: React.FC = () => {
           )}
         </Container>
       </Box>
-
-      {/* Footer Component */}
-      <Footer />
     </Box>
   );
 };
