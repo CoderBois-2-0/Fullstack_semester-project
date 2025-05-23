@@ -3,14 +3,17 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
 
-import protectedRouter from "./protectedRouter/index";
 import authRouter from "./authRouter";
+import eventRouter from "./eventRouter";
+import postRouter from "./postRouter";
+import commentRouter from "./commentRouter";
+import ticketRouter from "./ticketRouter";
 
 /**
  * @description
  * The bindings for the base router
  */
-interface Bindings {
+interface IBindings {
   /**
    * @property The jwt secret
    */
@@ -25,10 +28,15 @@ interface Bindings {
   DB_URL: string;
 }
 
+interface IHonoProperties<T> {
+  Bindings: IBindings;
+  Variables: T;
+}
+
 /**
  * @var The base router
  */
-const app = new OpenAPIHono<{ Bindings: Bindings }>();
+const app = new OpenAPIHono<{ Bindings: IBindings }>();
 
 app.use(async (c, next) => {
   const e = env<{ CORS_ORIGIN: string }>(c);
@@ -57,7 +65,10 @@ app
   })
   .get("/doc/ui", swaggerUI({ url: "/doc" }))
   .route("/auth", authRouter)
-  .route("/", protectedRouter);
+  .route("/events", eventRouter)
+  .route("/tickets", ticketRouter)
+  .route("/posts", postRouter)
+  .route("/comments", commentRouter);
 
 export default app;
-export { type Bindings };
+export { IHonoProperties };

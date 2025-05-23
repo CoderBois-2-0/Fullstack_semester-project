@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_KmkR5meVxm
 createdAt: 2025-05-12T19:30:08.056442714
-updatedAt: 2025-05-12T19:32:49.324081097
+updatedAt: 2025-05-22T13:55:39.728185237
 workspaceId: wk_JGkqCBFFB5
 folderId: fl_wGkWYPqXgh
 authentication: {}
@@ -14,5 +14,5 @@ headers: []
 method: DELETE
 name: delete event
 sortPriority: 4000.0
-url: ${[ URL ]}/events/daeb50d5-020f-4a30-a3b9-40eac45501fa
+url: ${[ URL ]}/events/e1672c0c-6bad-40dc-a99e-042f5733da58
 urlParameters: []
