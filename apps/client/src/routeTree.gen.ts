@@ -13,6 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
+import { Route as CreatePostImport } from './routes/create-post'
+import { Route as CreateEventImport } from './routes/create-event'
 import { Route as IndexImport } from './routes/index'
 import { Route as EventsIndexImport } from './routes/events/index'
 import { Route as EventsEventIdImport } from './routes/events/$eventId'
@@ -28,6 +30,18 @@ const SignupRoute = SignupImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CreatePostRoute = CreatePostImport.update({
+  id: '/create-post',
+  path: '/create-post',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CreateEventRoute = CreateEventImport.update({
+  id: '/create-event',
+  path: '/create-event',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -58,6 +72,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/create-event': {
+      id: '/create-event'
+      path: '/create-event'
+      fullPath: '/create-event'
+      preLoaderRoute: typeof CreateEventImport
+      parentRoute: typeof rootRoute
+    }
+    '/create-post': {
+      id: '/create-post'
+      path: '/create-post'
+      fullPath: '/create-post'
+      preLoaderRoute: typeof CreatePostImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -95,6 +123,8 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/create-event': typeof CreateEventRoute
+  '/create-post': typeof CreatePostRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -103,6 +133,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/create-event': typeof CreateEventRoute
+  '/create-post': typeof CreatePostRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -112,6 +144,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/create-event': typeof CreateEventRoute
+  '/create-post': typeof CreatePostRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/events/$eventId': typeof EventsEventIdRoute
@@ -120,15 +154,39 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/events/$eventId' | '/events'
+  fullPaths:
+    | '/'
+    | '/create-event'
+    | '/create-post'
+    | '/login'
+    | '/signup'
+    | '/events/$eventId'
+    | '/events'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/events/$eventId' | '/events'
-  id: '__root__' | '/' | '/login' | '/signup' | '/events/$eventId' | '/events/'
+  to:
+    | '/'
+    | '/create-event'
+    | '/create-post'
+    | '/login'
+    | '/signup'
+    | '/events/$eventId'
+    | '/events'
+  id:
+    | '__root__'
+    | '/'
+    | '/create-event'
+    | '/create-post'
+    | '/login'
+    | '/signup'
+    | '/events/$eventId'
+    | '/events/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CreateEventRoute: typeof CreateEventRoute
+  CreatePostRoute: typeof CreatePostRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
@@ -137,6 +195,8 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CreateEventRoute: CreateEventRoute,
+  CreatePostRoute: CreatePostRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   EventsEventIdRoute: EventsEventIdRoute,
@@ -154,6 +214,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/create-event",
+        "/create-post",
         "/login",
         "/signup",
         "/events/$eventId",
@@ -162,6 +224,12 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/create-event": {
+      "filePath": "create-event.tsx"
+    },
+    "/create-post": {
+      "filePath": "create-post.tsx"
     },
     "/login": {
       "filePath": "login.tsx"

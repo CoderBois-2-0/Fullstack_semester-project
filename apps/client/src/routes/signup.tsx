@@ -20,8 +20,6 @@ import {
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 
 import AuthClient from "@/apiClients/authClient";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import "@/App.css";
 
 const SignupPage: React.FC = () => {

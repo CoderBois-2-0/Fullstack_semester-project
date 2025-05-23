@@ -2,9 +2,6 @@ import React from "react";
 
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Box, Container, Typography } from "@mui/material";
-
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import EventGrid from "@/components/eventGrid";
 import EventCard from "@/components/eventCard";
 import { type IEvent } from "@/apiClients/eventClient";

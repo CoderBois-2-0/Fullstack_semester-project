@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import '@fontsource/press-start-2p/index.css';
 import {
@@ -10,12 +10,25 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const Navbar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleDropdownClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <AppBar position="sticky" color="default" elevation={0} sx={{ backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
@@ -49,9 +62,41 @@ const Navbar: React.FC = () => {
         {!isMobile ? (
           <Box>
             <Link to='/events'>
-            <Button sx={{ mr: 1 }}>Events</Button>
+              <Button sx={{ mr: 1 }}>Events</Button>
             </Link>
-            <Button sx={{ mr: 1 }}>Venues</Button>
+            
+            {/* Organiser Dropdown */}
+            <Button 
+              sx={{ mr: 1 }}
+              onClick={handleDropdownClick}
+              endIcon={<ArrowDropDownIcon />}
+              aria-controls={open ? 'organiser-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+            >
+              Organiser
+            </Button>
+            <Menu
+              id="organiser-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleDropdownClose}
+              MenuListProps={{
+                'aria-labelledby': 'organiser-button',
+              }}
+            >
+              <MenuItem onClick={handleDropdownClose}>
+                <Link to="/create-event" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+                  Create Event
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleDropdownClose}>
+                <Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+                  Create Post
+                </Link>
+              </MenuItem>
+            </Menu>
+            
             <Link to='/login'>
               <Button variant="contained" color='info'>Log In</Button>
             </Link>

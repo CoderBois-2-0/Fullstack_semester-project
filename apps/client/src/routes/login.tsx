@@ -14,12 +14,10 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import "../App.css";
 
 // Import for icons
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import AuthClient from "@/apiClients/authClient";
 
 const LoginPage: React.FC = () => {
