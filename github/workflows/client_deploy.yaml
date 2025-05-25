@@ -10,7 +10,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: client_production
     name: Deploy
     env:
       PROJECT: client
