@@ -1,16 +1,10 @@
-import EventClient from "@/apiClients/eventClient";
-import { queryData } from "./dataHook";
+import EventClient from "@/apiClients/eventClient/index";
+import { type TEventCreate } from "@/apiClients/eventClient/dto";
+import { mutateData, queryData } from "./dataHook";
+import { QueryClient } from "@tanstack/react-query";
 
 const QUERY_KEY = "events";
 const eventClient = new EventClient();
-
-function useEvent(eventId: string) {
-  const query = queryData([QUERY_KEY, eventId], async () =>
-    eventClient.findEventById(eventId),
-  );
-
-  return query;
-}
 
 function useEvents() {
   const query = queryData([QUERY_KEY], () => eventClient.getEvents());
@@ -18,4 +12,25 @@ function useEvents() {
   return query;
 }
 
-export { useEvent, useEvents };
+function useEvent(eventId: string) {
+  const query = queryData([QUERY_KEY, eventId], async () =>
+    eventClient.findEventById(eventId)
+  );
+
+  return query;
+}
+
+function useCreateEvent() {
+  const queryClient = new QueryClient();
+
+  const mutation = mutateData(
+    (newEvent: TEventCreate) => eventClient.createEvent(newEvent),
+    () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    }
+  );
+
+  return mutation;
+}
+
+export { useEvent, useEvents, useCreateEvent };

@@ -13,8 +13,11 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import { useCreateEvent } from "@/hooks/eventHook";
+import type { TEventCreate } from "@/apiClients/eventClient/dto";
 
 const CreateEventPage: React.FC = () => {
+  const mutation = useCreateEvent();
   const [eventData, setEventData] = useState({
     name: "",
     price: "",
@@ -24,25 +27,41 @@ const CreateEventPage: React.FC = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-  const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEventData(prev => ({
-      ...prev,
-      [field]: e.target.value
-    }));
-  };
+  const handleInputChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEventData((prev) => ({
+        ...prev,
+        [field]: e.target.value,
+      }));
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with:", {
+
+    const price = Number(eventData.price);
+    if (!price) {
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const newEvent: TEventCreate = {
       ...eventData,
-      startDate,
-      endDate
-    });
+      price,
+      startDate: startDate?.toDate(),
+      endDate: endDate?.toDate(),
+    };
+
+    mutation.mutate(newEvent);
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Box
+        sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
         <Box
           sx={{
             flexGrow: 1,
@@ -103,9 +122,11 @@ const CreateEventPage: React.FC = () => {
                     onChange={handleInputChange("price")}
                     slotProps={{
                       input: {
-                        startAdornment: <Typography sx={{ mr: 1 }}>DKK</Typography>,
-                        inputProps: { min: 0, step: 0.01 }
-                      }
+                        startAdornment: (
+                          <Typography sx={{ mr: 1 }}>DKK</Typography>
+                        ),
+                        inputProps: { min: 0, step: 0.01 },
+                      },
                     }}
                   />
 
@@ -117,8 +138,8 @@ const CreateEventPage: React.FC = () => {
                       textField: {
                         required: true,
                         fullWidth: true,
-                        variant: "outlined"
-                      }
+                        variant: "outlined",
+                      },
                     }}
                   />
 
@@ -131,8 +152,8 @@ const CreateEventPage: React.FC = () => {
                       textField: {
                         required: true,
                         fullWidth: true,
-                        variant: "outlined"
-                      }
+                        variant: "outlined",
+                      },
                     }}
                   />
 
@@ -172,6 +193,6 @@ const CreateEventPage: React.FC = () => {
 
 export default CreateEventPage;
 
-export const Route = createFileRoute("/create-event")({
+export const Route = createFileRoute("/events/create")({
   component: CreateEventPage,
 });

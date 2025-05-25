@@ -5,7 +5,7 @@ class APIClient {
     this.#baseURL = import.meta.env.VITE_API_URL;
   }
 
-  async get(path: string) {
+  async get<T>(path: string) {
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "get",
       headers: {
@@ -13,12 +13,12 @@ class APIClient {
       },
       credentials: "include",
     });
-    const data = await response.json();
+    const data = (await response.json()) as T;
 
     return data;
   }
 
-  async post(path: string, body: Object) {
+  async post<T>(path: string, body: Object) {
     const bodyString = JSON.stringify(body);
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "post",
@@ -28,7 +28,7 @@ class APIClient {
       credentials: "include",
       body: bodyString,
     });
-    const data = await response.json();
+    const data = (await response.json()) as T;
 
     return data;
   }
