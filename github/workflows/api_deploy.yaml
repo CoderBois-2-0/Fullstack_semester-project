@@ -3,8 +3,7 @@ name: Deploy api
 on:
   push:
     branches:
-      - "*"
-      #- main
+      - deploy-pipelin
     #paths:
     #  - apps/api/**
 

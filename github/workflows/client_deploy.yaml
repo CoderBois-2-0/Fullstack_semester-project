@@ -3,8 +3,7 @@ name: Deploy client
 on:
   push:
     branches:
-      - "*"
-      #- main
+      - deploy-pipeline
     #paths:
     #  - apps/client/**
 
