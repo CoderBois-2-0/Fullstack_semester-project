@@ -3,13 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite --port 3000 --env dev",
     "start": "vite --port 3000",
-    "build": "vite build && tsc",
+    "build": "tsc -b && vite build",
+    "deploy": "wrangler deploy",
     "serve": "vite preview",
     "test": "vitest run"
   },
   "dependencies": {
+    "@cloudflare/vite-plugin": "^1.2.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/press-start-2p": "^5.2.5",
@@ -38,6 +40,7 @@
     "typescript": "^5.7.2",
     "vite": "^6.1.0",
     "vitest": "^3.0.5",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "wrangler": "^4.14.4"
   }
 }

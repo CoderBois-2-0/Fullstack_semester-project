@@ -17,7 +17,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 // Import for icons
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import AuthClient from "@/apiClients/authClient";
 import "@/App.css";
@@ -31,7 +31,7 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [signupError, setSignupError] = useState("");
+  const [signupError, _setSignupError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
