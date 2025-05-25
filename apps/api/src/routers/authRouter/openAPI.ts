@@ -1,3 +1,4 @@
+import { AUTH_COOKIE_NAME } from "@/auth";
 import { userSelectSchema } from "@/db/handlers/userHandler";
 import { createRoute, z } from "@hono/zod-openapi";
 
@@ -89,4 +90,29 @@ const signInRoute = createRoute({
   },
 });
 
-export { signUpRoute, signInRoute };
+const validateRoute = createRoute({
+  description: "Will validate the user via the auth cookie",
+  tags: ["Auth"],
+  method: "get",
+  path: "/validate",
+  request: {
+    cookies: z.object({
+      [AUTH_COOKIE_NAME]: z.string(),
+    }),
+  },
+  responses: {
+    200: {
+      description: "User was validated",
+      content: {
+        "application/json": {
+          schema: userSelectSchema,
+        },
+      },
+    },
+    400: {
+      description: "Bad request, see request body specification",
+    },
+  },
+});
+
+export { signUpRoute, signInRoute, validateRoute };

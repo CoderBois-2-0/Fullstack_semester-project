@@ -25,6 +25,10 @@ class AuthClient {
       password,
     });
   }
+
+  async validate() {
+    return this.#baseClient.get(`${this.#basePath}/validate`);
+  }
 }
 
 export default AuthClient;
