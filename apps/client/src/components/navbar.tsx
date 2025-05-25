@@ -17,7 +17,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import useAuthStore from "@/stores/authStore";
 
-const Navbar: React.FC = async () => {
+const Navbar: React.FC = () => {
   const authStore = useAuthStore();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);

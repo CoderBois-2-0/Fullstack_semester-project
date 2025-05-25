@@ -34,17 +34,22 @@ const LoginPage: React.FC = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isValidating, setIsValidating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsValidating(true)
     const result = await authClient.signIn(email, password);
     if (result) {
       authStore.setUser(result);
       navigate({ to: "/events" });
     }
+
+    setIsValidating(false);
   };
 
   return (
@@ -107,7 +112,8 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                InputProps={{
+                slotProps={{
+                  input: {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
@@ -119,6 +125,7 @@ const LoginPage: React.FC = () => {
                       </IconButton>
                     </InputAdornment>
                   ),
+                  }
                 }}
               />
 
@@ -146,6 +153,7 @@ const LoginPage: React.FC = () => {
                   fontWeight: "bold",
                   mb: 3,
                 }}
+                  disabled={isValidating}
               >
                 Log In
               </Button>
@@ -163,6 +171,7 @@ const LoginPage: React.FC = () => {
                   color="inherit"
                   startIcon={<SiSteam />}
                   sx={{ py: 1.2 }}
+                  disabled={isValidating}
                 >
                   Continue with Steam
                 </Button>
@@ -176,6 +185,7 @@ const LoginPage: React.FC = () => {
                     color: "#8f9eff",
                     borderColor: "#8f9eff",
                   }}
+                  disabled={isValidating}
                 >
                   Continue with Discord
                 </Button>
