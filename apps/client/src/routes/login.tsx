@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { SiSteam, SiDiscord } from "react-icons/si";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import {
   Box,
   Container,
@@ -19,8 +24,12 @@ import "../App.css";
 // Import for icons
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import AuthClient from "@/apiClients/authClient";
+import useAuthStore from "@/stores/authStore";
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate({ from: "/login" });
+
+  const authStore = useAuthStore();
   const authClient = new AuthClient();
 
   const [email, setEmail] = useState("");
@@ -31,8 +40,11 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await authClient.signIn(email, password);
-    console.log(response);
+    const result = await authClient.signIn(email, password);
+    if (result) {
+      authStore.setUser(result);
+      navigate({ to: "/events" });
+    }
   };
 
   return (
@@ -189,4 +201,12 @@ export default LoginPage;
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
+  loader: async ({ context }) => {
+    const isAuthorized = await context.authStore.isAuthenticated();
+    if (isAuthorized) {
+      throw redirect({
+        to: "/",
+      });
+    }
+  },
 });

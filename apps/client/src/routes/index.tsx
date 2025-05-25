@@ -1,6 +1,6 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import HeroBanner from "@/components/heroBanner";
 import "../App.css";
 

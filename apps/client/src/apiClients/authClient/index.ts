@@ -1,4 +1,5 @@
-import APIClient from "./index";
+import APIClient from "../index";
+import type { IUserResponse } from "./dto";
 
 class AuthClient {
   #baseClient: APIClient;
@@ -10,7 +11,7 @@ class AuthClient {
   }
 
   async signUp(email: string, password: string, confirmPassword: string) {
-    return this.#baseClient.post(`${this.#basePath}/sign-up`, {
+    return this.#baseClient.post<IUserResponse>(`${this.#basePath}/sign-up`, {
       role: "GUEST",
       username: "default",
       email,
@@ -20,14 +21,18 @@ class AuthClient {
   }
 
   async signIn(email: string, password: string) {
-    return this.#baseClient.post(`${this.#basePath}/sign-in`, {
+    return this.#baseClient.post<IUserResponse>(`${this.#basePath}/sign-in`, {
       email,
       password,
     });
   }
 
   async validate() {
-    return this.#baseClient.get(`${this.#basePath}/validate`);
+    return this.#baseClient.get<IUserResponse>(`${this.#basePath}/validate`);
+  }
+
+  async signOut() {
+    return this.#baseClient.get(`${this.#basePath}/sign-out`);
   }
 }
 

@@ -1,9 +1,10 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { TJWTVariables } from "@/auth";
+import { AUTH_COOKIE_NAME, jwtMiddleware, TJWTVariables } from "@/auth";
 import { IAuthHonoProperties } from "./index";
-import { validateRoute } from "./openAPI";
+import { signOutRoute, validateRoute } from "./openAPI";
 import { IHonoProperties } from "..";
+import { deleteCookie } from "hono/cookie";
 
 interface IProtectedAuthVariables extends IAuthHonoProperties, TJWTVariables {}
 
@@ -12,10 +13,20 @@ interface IProtectedAuthVariables extends IAuthHonoProperties, TJWTVariables {}
  */
 const protectedRouter = new OpenAPIHono<
   IHonoProperties<IProtectedAuthVariables>
->().openapi(validateRoute, (c) => {
-  const user = c.get("jwtPayload");
+>();
 
-  return c.json(user);
-});
+protectedRouter.use(jwtMiddleware);
+
+protectedRouter
+  .openapi(validateRoute, (c) => {
+    const user = c.get("jwtPayload");
+
+    return c.json({ ...user });
+  })
+  .openapi(signOutRoute, (c) => {
+    deleteCookie(c, AUTH_COOKIE_NAME);
+
+    return c.json({ data: "User signed out" });
+  });
 
 export default protectedRouter;

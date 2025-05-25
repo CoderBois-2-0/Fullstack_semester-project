@@ -14,7 +14,6 @@ const publicRouter = new OpenAPIHono<IAuthHonoProperties>()
 
     const { confirmPassword: _confirmPassword, ...newUser } =
       c.req.valid("json");
-    console.log(newUser);
 
     const hashedPassword = await hash(newUser.password);
     const createdUser = await userHandler.createUser({
@@ -33,19 +32,26 @@ const publicRouter = new OpenAPIHono<IAuthHonoProperties>()
     const userHandler = c.get("userHandler");
     const user = c.req.valid("json");
 
-    const existingUser = await userHandler.findUserByEmail(user.email);
-    if (!existingUser) {
+    const unsafeExistingUser = await userHandler.unsafeFindUserByEmail(
+      user.email
+    );
+    if (!unsafeExistingUser) {
       return c.json({ data: "No user found" }, 404);
     }
 
-    const isPasswordValid = await verify(user.password, existingUser.password);
+    const isPasswordValid = await verify(
+      user.password,
+      unsafeExistingUser.password
+    );
     if (!isPasswordValid) {
       return c.json({ data: "Unauthorized" }, 401);
     }
 
-    setJWTCookie(c, c.env.JWT_SECRET, existingUser);
+    const { password: _password, ...safeExistingUser } = unsafeExistingUser;
 
-    return c.json({ user: existingUser });
+    setJWTCookie(c, c.env.JWT_SECRET, safeExistingUser);
+
+    return c.json({ ...safeExistingUser });
   });
 
 export default publicRouter;
