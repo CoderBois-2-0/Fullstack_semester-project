@@ -2,14 +2,15 @@
   "name": "api",
   "type": "module",
   "scripts": {
+    "test": "vitest",
     "dev": "wrangler dev",
-    "build": "tsc",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "dotenv -e .dev.vars -- drizzle-kit migrate",
-    "client:dev": "pnpm --filter client dev"
+    "db:migrate": "dotenv -e .dev.vars -- drizzle-kit migrate"
   },
   "dependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.32",
     "@hono/node-server": "^1.14.2",
     "@hono/swagger-ui": "^0.5.1",
     "@hono/zod-openapi": "^0.19.6",
@@ -25,8 +26,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.17.45",
+    "config": "link:@cloudflare/vitest-pool-workers/config",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
   }
 }
