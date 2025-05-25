@@ -13,8 +13,6 @@ jobs:
     environment: client_production
     name: Deploy
     env:
-      VITE_API_URL: ${{ vars.API_URL }}
-      VITE_DEV: false
       PROJECT: client
     steps:
       - uses: actions/checkout@v4
