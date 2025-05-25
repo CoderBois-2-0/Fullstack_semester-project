@@ -3,7 +3,7 @@ name: Deploy api
 on:
   push:
     branches:
-      - *
+      - "*"
       #- main
     #paths:
     #  - apps/api/**
