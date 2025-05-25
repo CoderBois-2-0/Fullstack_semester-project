@@ -1,0 +1,21 @@
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { commentGetRoute, commentGetByIdRoute } from "./openAPI";
+/**
+ * @var The public comment router
+ */
+const publicRouter = new OpenAPIHono()
+    .openapi(commentGetRoute, async (c) => {
+    const commentHandler = c.get("commentHandler");
+    const comment = await commentHandler.getComments();
+    return c.json({ comment });
+})
+    .openapi(commentGetByIdRoute, async (c) => {
+    const commentId = c.req.param("commentId");
+    const commentHandler = c.get("commentHandler");
+    const comment = await commentHandler.findCommentById(commentId);
+    if (!comment) {
+        return c.json({ data: "Not found" }, 404);
+    }
+    return c.json({ comment });
+});
+export default publicRouter;

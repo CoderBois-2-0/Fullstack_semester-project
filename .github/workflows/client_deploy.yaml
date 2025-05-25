@@ -3,9 +3,9 @@ name: Deploy client
 on:
   push:
     branches:
-      - deploy-pipeline
-    #paths:
-    #  - apps/client/**
+      - main
+    paths:
+      - apps/client/**
 
 jobs:
   deploy:
