@@ -3,9 +3,9 @@ name: Deploy api
 on:
   push:
     branches:
-      - deploy-pipeline
-    #paths:
-    #  - apps/api/**
+      - main
+    paths:
+      - apps/api/**
 
 jobs:
   deploy:
