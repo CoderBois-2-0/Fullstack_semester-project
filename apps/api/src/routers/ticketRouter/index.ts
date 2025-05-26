@@ -1,15 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { Bindings, IHonoProperties } from "@/routers/index";
+import { IHonoProperties } from "@/routers/index";
 import { TicketHandler } from "@/db/handlers/ticketHandler";
-import {
-  ticketGetRoute,
-  ticketGetByIdRoute,
-  ticketPostRoute,
-  ticketPutRoute,
-  ticketDeleteRoute,
-} from "./openAPI";
-import { createMiddleware } from "hono/factory";
 import protectedRouter from "./protected";
 
 /**

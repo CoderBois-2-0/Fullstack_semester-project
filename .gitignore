@@ -18,6 +18,7 @@ node_modules/
 
 # build
 .wrangler
+dist
 
 # logs
 logs/

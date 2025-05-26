@@ -40,7 +40,7 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [signupError, setSignupError] = useState("");
+  const [signupError, _setSignupError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

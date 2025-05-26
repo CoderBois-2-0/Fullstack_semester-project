@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { Bindings, IHonoProperties } from "@/routers/index";
+import { IHonoProperties } from "@/routers/index";
 import { CommentHandler } from "@/db/handlers/commentHandler";
 import publicRouter from "./public";
 import protectedRouter from "./protected";

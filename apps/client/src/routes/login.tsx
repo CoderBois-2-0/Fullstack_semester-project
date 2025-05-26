@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
 
   const [isValidating, setIsValidating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [loginError, _setLoginError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

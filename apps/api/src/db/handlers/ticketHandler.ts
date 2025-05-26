@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { eventTable, ticketTable } from "@/db/schema";
-import { TTicketGetQuery } from "@/routers/protectedRouter/ticketRouter/openAPI";
+import { TTicketGetQuery } from "@/routers/ticketRouter/openAPI";
 import { TEvent } from "./eventHandler";
 import { createSelectSchema } from "drizzle-zod";
 
@@ -62,9 +62,7 @@ class TicketHandler {
    * @param query - A query object for allowing dynamic selection
    * @returns A list of all tickets
    */
-  async getTickets(
-    query: TTicketGetQuery,
-  ): Promise<({ ticket: TTicket } | { ticket: TTicket; event: TEvent })[]> {
+  async getTickets(query: TTicketGetQuery) {
     let queryBuilder = this.#client
       .select({
         ticket: getTableColumns(this.#table),
@@ -78,13 +76,13 @@ class TicketHandler {
     if (query["with-event"] !== undefined) {
       queryBuilder = queryBuilder.innerJoin(
         eventTable,
-        eq(this.#table.eventId, eventTable.id),
+        eq(this.#table.eventId, eventTable.id)
       );
     }
 
     if (query["user-id"] !== undefined) {
       queryBuilder = queryBuilder.where(
-        eq(this.#table.userId, query["user-id"]),
+        eq(this.#table.userId, query["user-id"])
       );
     }
 
