@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { jwt, sign, JwtVariables } from "hono/jwt";
 import { setCookie } from "hono/cookie";
 
-import { TUser } from "./db/handlers/userHandler";
+import { TUser, TSafeUser } from "./db/handlers/userHandler";
 import { createMiddleware } from "hono/factory";
 
 /**
@@ -17,12 +17,12 @@ const AUTH_COOKIE_NAME = "auth-cookie";
  * @param jwtSecret - The secret used to sign the jwt with
  * @param jwtPayload - The payload used when signing  the jwt
  */
-async function setJWTCookie(c: Context, jwtSecret: string, jwtPayload: TUser) {
-  // ensures the password is not sent along as part of the cookie
-  const { password, ...rest } = jwtPayload;
-  const safeJWtPayload: Omit<TUser, "password"> = rest;
-
-  const jwtToken = await sign(safeJWtPayload, jwtSecret);
+async function setJWTCookie(
+  c: Context,
+  jwtSecret: string,
+  jwtPayload: TSafeUser
+) {
+  const jwtToken = await sign(jwtPayload, jwtSecret);
 
   setCookie(c, AUTH_COOKIE_NAME, jwtToken, {
     maxAge: 60 * 60 * 24 * 7, // 1 week

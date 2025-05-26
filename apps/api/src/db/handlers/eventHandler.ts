@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { eventTable, ticketTable } from "../schema";
-import { TEventGetQuery } from "@/routers/protectedRouter/eventRouter/openAPI";
+import { TEventGetQuery } from "@/routers/eventRouter/openAPI";
 
 const eventSelectSchema = createSelectSchema(eventTable);
 /**
@@ -73,7 +73,7 @@ class EventHandler {
           ? {
               ticketCount: this.#client.$count(
                 ticketTable,
-                eq(this.#table.id, ticketTable.eventId),
+                eq(this.#table.id, ticketTable.eventId)
               ),
             }
           : {}),
@@ -83,7 +83,7 @@ class EventHandler {
 
     if (query["user-id"] !== undefined) {
       queryBuilder = queryBuilder.where(
-        eq(this.#table.creatorId, query["user-id"]),
+        eq(this.#table.creatorId, query["user-id"])
       );
     }
 
@@ -140,13 +140,13 @@ class EventHandler {
   async updateEvent(
     userId: string,
     eventId: string,
-    updatedEvent: TEventUpdate,
+    updatedEvent: TEventUpdate
   ) {
     const eventsReturned = await this.#client
       .update(this.#table)
       .set(updatedEvent)
       .where(
-        and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId)),
+        and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId))
       )
       .returning();
 
@@ -164,7 +164,7 @@ class EventHandler {
     const eventsReturned = await this.#client
       .delete(this.#table)
       .where(
-        and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId)),
+        and(eq(this.#table.creatorId, userId), eq(this.#table.id, eventId))
       )
       .returning();
 
