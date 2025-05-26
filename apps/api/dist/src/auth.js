@@ -13,10 +13,7 @@ const AUTH_COOKIE_NAME = "auth-cookie";
  * @param jwtPayload - The payload used when signing  the jwt
  */
 async function setJWTCookie(c, jwtSecret, jwtPayload) {
-    // ensures the password is not sent along as part of the cookie
-    const { password, ...rest } = jwtPayload;
-    const safeJWtPayload = rest;
-    const jwtToken = await sign(safeJWtPayload, jwtSecret);
+    const jwtToken = await sign(jwtPayload, jwtSecret);
     setCookie(c, AUTH_COOKIE_NAME, jwtToken, {
         maxAge: 60 * 60 * 24 * 7, // 1 week
         path: "/",
