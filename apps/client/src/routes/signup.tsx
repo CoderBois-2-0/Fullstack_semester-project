@@ -1,4 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import React, { useState } from "react";
 import { SiSteam, SiDiscord } from "react-icons/si";
 import {
@@ -20,9 +25,13 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import AuthClient from "@/apiClients/authClient";
+import useAuthStore from "@/stores/authStore";
 import "@/App.css";
 
 const SignupPage: React.FC = () => {
+  const navigate = useNavigate({ from: "/signup" });
+  const authStore = useAuthStore();
+
   const authClient = new AuthClient();
 
   const [email, setEmail] = useState("");
@@ -37,7 +46,10 @@ const SignupPage: React.FC = () => {
     e.preventDefault();
 
     const result = await authClient.signUp(email, password, confirmPassword);
-    console.log(result);
+    if (result) {
+      authStore.setUser(result);
+      navigate({ to: "/events" });
+    }
   };
 
   return (
@@ -235,4 +247,12 @@ export default SignupPage;
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
+  loader: async ({ context }) => {
+    const isAuthorized = await context.authStore.isAuthenticated();
+    if (isAuthorized) {
+      throw redirect({
+        to: "/",
+      });
+    }
+  },
 });
