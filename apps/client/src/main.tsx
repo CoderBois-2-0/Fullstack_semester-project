@@ -13,6 +13,7 @@ import useAuthStore from "./stores/authStore.ts";
 const router = createRouter({
   routeTree,
   context: {
+    //@ts-ignore - it will be set in the App component
     authStore: undefined,
   },
   defaultPreload: "intent",
