@@ -8,10 +8,16 @@ class PostClient {
     this.#baseClient = new APIClient("posts");
   }
 
-  async getPosts(): Promise<IPost[]> {
+  /**
+   * @description
+   * Fetches posts associated with a specific event
+   * @param eventId - The event associated with the posts
+   * @returns
+   */
+  async getPosts(eventId: string): Promise<IPost[]> {
     const postResponses = await this.#baseClient.get<{
       posts: IPostResponse[];
-    }>();
+    }>(undefined, `event-id=${eventId}`);
     if (!postResponses) {
       throw Error("");
     }

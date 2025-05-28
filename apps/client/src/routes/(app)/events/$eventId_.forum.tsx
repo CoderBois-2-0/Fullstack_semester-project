@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useCreatePost, usePosts } from "@/hooks/postHook";
 import QueryRenderer from "@/components/queryRenderer";
-import type { IPost, IPostRequest, I } from "@/apiClients/postClient/dto";
+import type { IPost, IPostRequest } from "@/apiClients/postClient/dto";
 
 export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
   loader: async ({ context }) => {
@@ -45,7 +45,7 @@ function PostsQuery(props: { posts: IPost[] }) {
 function RouteComponent() {
   const { eventId } = Route.useParams();
 
-  const postQuery = usePosts();
+  const postQuery = usePosts(eventId);
   const postMutation = useCreatePost();
 
   const [postData, setPostData] = useState({

@@ -5,9 +5,20 @@ import {
 } from "@/db/handlers/postHandler";
 import { createRoute, z } from "@hono/zod-openapi";
 
-const postResponseSchema = postSelectSchema
-  .openapi("Post Response")
-  .openapi("Post response");
+const postResponseSchema = postSelectSchema.openapi("Post response");
+
+/**
+ * @description
+ * The zod shcema for a post query
+ */
+const postQuerySchema = z.object({
+  "event-id": z
+    .string()
+    .uuid()
+    .optional()
+    .openapi({ description: "Get post from a specific event" }),
+});
+type TPostQuery = z.infer<typeof postQuerySchema>;
 
 /**
  * @var The openAPI spec for the get route for posts
@@ -17,6 +28,9 @@ const postGetRoute = createRoute({
   tags: ["Posts"],
   method: "get",
   path: "/",
+  request: {
+    query: postQuerySchema,
+  },
   responses: {
     200: {
       description: "All posts were retrieved",
@@ -165,4 +179,5 @@ export {
   postPostRoute,
   postPutRoute,
   postDeleteRoute,
+  TPostQuery,
 };

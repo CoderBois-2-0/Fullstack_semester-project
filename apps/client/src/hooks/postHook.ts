@@ -7,8 +7,10 @@ import type { IPostRequest } from "@/apiClients/postClient/dto";
 const QUERY_KEY = "posts";
 const postClient = new PostClient();
 
-function usePosts() {
-  const query = queryData([QUERY_KEY], () => postClient.getPosts());
+function usePosts(eventId: string) {
+  const query = queryData([QUERY_KEY, eventId], () =>
+    postClient.getPosts(eventId)
+  );
 
   return query;
 }

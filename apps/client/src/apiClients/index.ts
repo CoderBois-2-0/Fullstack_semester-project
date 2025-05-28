@@ -7,16 +7,19 @@ class APIClient {
     this.#basePath = basePath;
   }
 
-  async get<T>(extendedPath?: string): Promise<T | null> {
+  async get<T>(extendedPath?: string, query?: string): Promise<T | null> {
     const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
 
-    const response = await fetch(`${this.#baseURL}/${path}`, {
-      method: "get",
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${this.#baseURL}/${path}${query ? `?${query}` : ""}`,
+      {
+        method: "get",
+        headers: {
+          Accept: "application/json",
+        },
+        credentials: "include",
+      }
+    );
     if (response.status !== 200) {
       return null;
     }
