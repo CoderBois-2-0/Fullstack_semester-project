@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
 import { postTable } from "@/db/schema";
+import { TPostQuery } from "@/routers/postRouter/openAPI";
 
 const postSelectSchema = createSelectSchema(postTable);
 type TPost = z.infer<typeof postSelectSchema>;
@@ -56,10 +57,19 @@ class PostHandler {
   /**
    * @description
    * Retrieves all posts
+   * @param query - A query object used for dynamic filtering of posts
    * @returns A list of all events
    */
-  async getPosts() {
-    return this.#client.query.postTable.findMany();
+  async getPosts(query: TPostQuery) {
+    let queryBuilder = this.#client.select().from(this.#table).$dynamic();
+
+    if (query["event-id"]) {
+      queryBuilder = queryBuilder.where(
+        eq(this.#table.eventId, query["event-id"])
+      );
+    }
+
+    return queryBuilder.execute();
   }
 
   /**

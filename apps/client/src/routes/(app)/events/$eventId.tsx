@@ -1,23 +1,11 @@
-import { createFileRoute, Link, type ReactNode } from "@tanstack/react-router";
-import { type UseQueryResult } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Box, Container, Typography, Button, Paper } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useEvent } from "@/hooks/eventHook";
-import type { IEvent } from "@/apiClients/eventClient";
+import type { IEvent } from "@/apiClients/eventClient/dto";
 import CardSkeleton from "@/components/cardSkeleton";
-
-function QueryRenderer<T>(props: {
-  query: UseQueryResult<T, Error>;
-  renderFn: (data: T) => ReactNode;
-}) {
-  if (props.query.data) {
-    return props.renderFn(props.query.data);
-  } else {
-    console.log(props.query.error?.message);
-    return <p>No Event</p>;
-  }
-}
+import QueryRenderer from "@/components/queryRenderer";
 
 const EventDetail = (props: { event: IEvent }) => {
   const event = props.event;
@@ -128,6 +116,6 @@ const EventPage = () => {
 export default EventPage;
 
 // Route definition for TanStack Router
-export const Route = createFileRoute("/events/$eventId")({
+export const Route = createFileRoute("/(app)/events/$eventId")({
   component: EventPage,
 });

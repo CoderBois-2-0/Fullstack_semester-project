@@ -21,20 +21,25 @@ const userRelation = relations(userTable, ({ many }) => {
   };
 });
 
-const eventTable = pgTable("events", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  price: real("price").notNull(),
-  location: text("location").notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  creatorId: text("creator_id").notNull(),
-}, (table) => [
-  foreignKey({
-    columns: [table.creatorId],
-    foreignColumns: [userTable.id],
-  }),
-]);
+const eventTable = pgTable(
+  "events",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    description: text("description").notNull(),
+    price: real("price").notNull(),
+    location: text("location").notNull(),
+    startDate: timestamp("start_date").notNull(),
+    endDate: timestamp("end_date").notNull(),
+    creatorId: text("creator_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.creatorId],
+      foreignColumns: [userTable.id],
+    }),
+  ]
+);
 
 const eventRelation = relations(eventTable, ({ one, many }) => {
   return {
@@ -47,20 +52,24 @@ const eventRelation = relations(eventTable, ({ one, many }) => {
   };
 });
 
-const ticketTable = pgTable("tickets", {
-  id: text("id").primaryKey(),
-  eventId: text("event_id").notNull(),
-  userId: text("user_id").notNull(),
-}, (table) => [
-  foreignKey({
-    columns: [table.eventId],
-    foreignColumns: [eventTable.id],
-  }),
-  foreignKey({
-    columns: [table.userId],
-    foreignColumns: [userTable.id],
-  }),
-]);
+const ticketTable = pgTable(
+  "tickets",
+  {
+    id: text("id").primaryKey(),
+    eventId: text("event_id").notNull(),
+    userId: text("user_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.eventId],
+      foreignColumns: [eventTable.id],
+    }),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [userTable.id],
+    }),
+  ]
+);
 
 const ticketRelation = relations(ticketTable, ({ one, many }) => {
   return {
@@ -76,23 +85,27 @@ const ticketRelation = relations(ticketTable, ({ one, many }) => {
   };
 });
 
-const postTable = pgTable("posts", {
-  id: text("id").primaryKey(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  eventId: text("event_id").notNull(),
-  userId: text("user_id").notNull(),
-}, (table) => [
-  foreignKey({
-    columns: [table.eventId],
-    foreignColumns: [eventTable.id],
-  }),
-  foreignKey({
-    columns: [table.userId],
-    foreignColumns: [userTable.id],
-  }),
-]);
+const postTable = pgTable(
+  "posts",
+  {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").notNull(),
+    eventId: text("event_id").notNull(),
+    userId: text("user_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.eventId],
+      foreignColumns: [eventTable.id],
+    }),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [userTable.id],
+    }),
+  ]
+);
 
 const postRelation = relations(postTable, ({ one, many }) => {
   return {
@@ -108,22 +121,26 @@ const postRelation = relations(postTable, ({ one, many }) => {
   };
 });
 
-const commentTable = pgTable("comments", {
-  id: text("id").primaryKey(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  userId: text("user_id").notNull(),
-  postId: text("post_id").notNull(),
-}, (table) => [
-  foreignKey({
-    columns: [table.userId],
-    foreignColumns: [userTable.id],
-  }),
-  foreignKey({
-    columns: [table.postId],
-    foreignColumns: [postTable.id],
-  }),
-]);
+const commentTable = pgTable(
+  "comments",
+  {
+    id: text("id").primaryKey(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").notNull(),
+    userId: text("user_id").notNull(),
+    postId: text("post_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [userTable.id],
+    }),
+    foreignKey({
+      columns: [table.postId],
+      foreignColumns: [postTable.id],
+    }),
+  ]
+);
 
 const commentRelation = relations(commentTable, ({ one }) => {
   return {

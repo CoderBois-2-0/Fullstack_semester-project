@@ -19,9 +19,6 @@ eventProtectedRouter.use(jwtMiddleware);
 eventProtectedRouter
   .openapi(eventPostRoute, async (c) => {
     const user = c.get("jwtPayload");
-    if (user.role !== "ORGANISER") {
-      return c.json({ data: "Only organisers can create events" }, 401);
-    }
 
     const eventHandler = c.get("eventHandler");
 

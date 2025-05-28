@@ -9,8 +9,9 @@ import { IPostHonoProperties } from "./index";
 const publicRouter = new OpenAPIHono<IPostHonoProperties>()
   .openapi(postGetRoute, async (c) => {
     const postHandler = c.get("postHandler");
+    const query = c.req.valid("query");
 
-    const posts = await postHandler.getPosts();
+    const posts = await postHandler.getPosts(query);
 
     return c.json({ posts });
   })

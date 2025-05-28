@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
             >
               <MenuItem onClick={handleDropdownClose}>
                 <Link
-                  to="/create-event"
+                  to="/events/create"
                   style={{
                     textDecoration: "none",
                     color: "inherit",
