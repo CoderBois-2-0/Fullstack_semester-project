@@ -1,32 +1,49 @@
-import { type IEventGETResponse, type IEventPostResponse, type IEvent, type TEventCreate } from "./dto";
+import {
+  type IEventGETResponse,
+  type IEventPostResponse,
+  type IEvent,
+  type TEventCreate,
+} from "./dto";
 import APIClient from "@/apiClients/index";
-
 
 class EventClient {
   #baseClient: APIClient;
-  #basePath: string;
 
   constructor() {
-    this.#baseClient = new APIClient();
-    this.#basePath = "events";
+    this.#baseClient = new APIClient("events");
   }
 
   async getEvents(): Promise<IEvent[]> {
-    const eventResponse = (await this.#baseClient.get<{ events: IEventGETResponse[]}>(this.#basePath));
+    const eventResponse = await this.#baseClient.get<{
+      events: IEventGETResponse[];
+    }>();
+    if (!eventResponse) {
+      return [];
+    }
 
-    return eventResponse.events.map((eventResponse) => this.#transform(eventResponse));
+    return eventResponse.events.map((eventResponse) =>
+      this.#transform(eventResponse)
+    );
   }
 
-  async findEventById(eventId: string): Promise<IEvent | undefined> {
-    const eventResponse = (await this.#baseClient.get<IEventGETResponse>(
-      `${this.#basePath}/${eventId}`,
-    ));
+  async findEventById(eventId: string): Promise<IEvent | null> {
+    const eventResponse = await this.#baseClient.get<IEventGETResponse>(
+      `/${eventId}`
+    );
+    if (!eventResponse) {
+      return null;
+    }
 
     return this.#transform(eventResponse);
   }
 
-  async createEvent(newEvent: TEventCreate): Promise<IEvent> {
-    const eventResponse = await this.#baseClient.post<IEventPostResponse>(this.#basePath, newEvent);
+  async createEvent(newEvent: TEventCreate): Promise<IEvent | null> {
+    const eventResponse = await this.#baseClient.post<IEventPostResponse>(
+      newEvent
+    );
+    if (!eventResponse) {
+      return null;
+    }
 
     return this.#transform(eventResponse);
   }

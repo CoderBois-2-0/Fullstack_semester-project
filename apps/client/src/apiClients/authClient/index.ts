@@ -3,36 +3,40 @@ import type { IUserResponse } from "./dto";
 
 class AuthClient {
   #baseClient: APIClient;
-  #basePath: string;
 
   constructor() {
-    this.#baseClient = new APIClient();
-    this.#basePath = "auth";
+    this.#baseClient = new APIClient("auth");
   }
 
   async signUp(email: string, password: string, confirmPassword: string) {
-    return this.#baseClient.post<IUserResponse>(`${this.#basePath}/sign-up`, {
-      role: "GUEST",
-      username: "default",
-      email,
-      password,
-      confirmPassword,
-    });
+    return this.#baseClient.post<IUserResponse>(
+      {
+        role: "GUEST",
+        username: "default",
+        email,
+        password,
+        confirmPassword,
+      },
+      "/sign-up"
+    );
   }
 
   async signIn(email: string, password: string) {
-    return this.#baseClient.post<IUserResponse>(`${this.#basePath}/sign-in`, {
-      email,
-      password,
-    });
+    return this.#baseClient.post<IUserResponse>(
+      {
+        email,
+        password,
+      },
+      "/sign-in"
+    );
   }
 
   async validate() {
-    return this.#baseClient.get<IUserResponse>(`${this.#basePath}/validate`);
+    return this.#baseClient.get<IUserResponse>("/validate");
   }
 
   async signOut() {
-    return this.#baseClient.get(`${this.#basePath}/sign-out`);
+    return this.#baseClient.get("/sign-out");
   }
 }
 

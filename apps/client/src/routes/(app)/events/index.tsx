@@ -1,7 +1,7 @@
 import React from "react";
 
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Box, Container, Typography, Button } from "@mui/material";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Box, Container, Typography } from "@mui/material";
 import EventGrid from "@/components/eventGrid";
 import EventCard from "@/components/eventCard";
 import { type IEvent } from "@/apiClients/eventClient/dto";
@@ -13,7 +13,6 @@ const events: React.FC = () => {
 
   // Handle event card click
   const handleEventClick = (event: IEvent) => {
-    console.log("Event clicked:", event.id);
     navigate({ to: `/events/${event.id}` });
   };
 
@@ -27,32 +26,12 @@ const events: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         {/* Page Title */}
-        <Container
-          maxWidth="lg"
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mt: 4,
-            mb: 3,
-          }}
-        >
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 3 }}>
           <Typography variant="h4" component="h1" fontWeight="bold">
             Upcoming Events
           </Typography>
-
-          <Box alignSelf="center">
-            <Link to="/events/create">
-              <Button variant="outlined">Create new Event</Button>
-            </Link>
-          </Box>
         </Container>
 
         {/* EventGrid Component */}
@@ -85,6 +64,6 @@ const events: React.FC = () => {
 
 export default events;
 
-export const Route = createFileRoute("/events/")({
+export const Route = createFileRoute("/(app)/events/")({
   component: events,
 });

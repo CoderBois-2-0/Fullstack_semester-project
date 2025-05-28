@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { SiSteam, SiDiscord } from "react-icons/si";
 import {
   createFileRoute,
   Link,
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
+import React, { useState } from "react";
+import { SiSteam, SiDiscord } from "react-icons/si";
 import {
   Box,
   Container,
@@ -18,38 +18,38 @@ import {
   Alert,
   Divider,
   Stack,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import "../App.css";
-
 // Import for icons
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 import AuthClient from "@/apiClients/authClient";
 import useAuthStore from "@/stores/authStore";
+import "@/App.css";
 
-const LoginPage: React.FC = () => {
-  const navigate = useNavigate({ from: "/login" });
-
+const SignupPage: React.FC = () => {
+  const navigate = useNavigate({ from: "/signup" });
   const authStore = useAuthStore();
+
   const authClient = new AuthClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [isValidating, setIsValidating] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, _setLoginError] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [signupError, _setSignupError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsValidating(true)
-    const result = await authClient.signIn(email, password);
+    const result = await authClient.signUp(email, password, confirmPassword);
     if (result) {
       authStore.setUser(result);
       navigate({ to: "/events" });
     }
-
-    setIsValidating(false);
   };
 
   return (
@@ -81,15 +81,13 @@ const LoginPage: React.FC = () => {
               color="primary"
               mb={4}
             >
-              Log In
+              Create Account
             </Typography>
-
-            {loginError && (
+            {signupError && (
               <Alert severity="error" sx={{ mb: 3 }}>
-                {loginError}
+                {signupError}
               </Alert>
             )}
-
             <form onSubmit={handleSubmit}>
               <TextField
                 label="Email Address"
@@ -100,7 +98,6 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoFocus
               />
 
               <TextField
@@ -114,34 +111,76 @@ const LoginPage: React.FC = () => {
                 required
                 slotProps={{
                   input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  }
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 1,
-                  mb: 2,
+              <TextField
+                label="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle confirm password visibility"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          edge="end"
+                        >
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
-              >
-                <Link to="/" className="link-style">
-                  Forgot password?
-                </Link>
-              </Box>
+              />
 
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    required
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">
+                    I agree to the{" "}
+                    <Link to="/" className="link-style">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="/" className="link-style">
+                      Privacy Policy
+                    </Link>
+                  </Typography>
+                }
+                sx={{ mt: 2 }}
+              />
               <Button
                 type="submit"
                 fullWidth
@@ -151,19 +190,18 @@ const LoginPage: React.FC = () => {
                 sx={{
                   py: 1.5,
                   fontWeight: "bold",
+                  mt: 3,
                   mb: 3,
                 }}
-                  disabled={isValidating}
+                disabled={!agreeToTerms}
               >
-                Log In
+                Sign Up
               </Button>
-
               <Divider sx={{ my: 3 }}>
                 <Typography variant="body2" color="text.secondary">
                   OR
                 </Typography>
               </Divider>
-
               <Stack spacing={2}>
                 <Button
                   fullWidth
@@ -171,7 +209,6 @@ const LoginPage: React.FC = () => {
                   color="inherit"
                   startIcon={<SiSteam />}
                   sx={{ py: 1.2 }}
-                  disabled={isValidating}
                 >
                   Continue with Steam
                 </Button>
@@ -185,7 +222,6 @@ const LoginPage: React.FC = () => {
                     color: "#8f9eff",
                     borderColor: "#8f9eff",
                   }}
-                  disabled={isValidating}
                 >
                   Continue with Discord
                 </Button>
@@ -193,9 +229,9 @@ const LoginPage: React.FC = () => {
 
               <Box sx={{ textAlign: "center", mt: 4 }}>
                 <Typography variant="body2">
-                  Don't have an account?{" "}
-                  <Link to="/signup" className="link-style">
-                    Sign up
+                  Already have an account?{" "}
+                  <Link to="/login" className="link-style">
+                    Log in
                   </Link>
                 </Typography>
               </Box>
@@ -207,10 +243,10 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;
 
-export const Route = createFileRoute("/login")({
-  component: LoginPage,
+export const Route = createFileRoute("/(auth)/signup")({
+  component: SignupPage,
   loader: async ({ context }) => {
     const isAuthorized = await context.authStore.isAuthenticated();
     if (isAuthorized) {

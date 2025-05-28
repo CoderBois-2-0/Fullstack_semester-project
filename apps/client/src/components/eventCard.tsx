@@ -11,7 +11,8 @@ import {
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-import { type IEvent } from "@/apiClients/eventClient";
+import { type IEvent } from "@/apiClients/eventClient/dto";
+import { Link } from "@tanstack/react-router";
 
 interface EventCardProps {
   event: IEvent;
@@ -101,7 +102,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       </CardContent>
 
       {/* Price and action button */}
-      <CardActions sx={{ justifyContent: "space-between", px: 2 }}>
+      <CardActions sx={{ px: 2 }}>
         <Button
           variant="contained"
           size="small"
@@ -110,6 +111,16 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
         >
           Get Tickets
         </Button>
+
+        <Link
+          to="/events/$eventId/forum"
+          params={{ eventId: event.id }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Button variant="contained" size="small" color="secondary">
+            Go to forum
+          </Button>
+        </Link>
       </CardActions>
     </Card>
   );

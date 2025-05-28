@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Box,
   Container,
@@ -17,7 +17,9 @@ import { useCreateEvent } from "@/hooks/eventHook";
 import type { TEventCreate } from "@/apiClients/eventClient/dto";
 
 const CreateEventPage: React.FC = () => {
-  const mutation = useCreateEvent();
+  const navigator = useNavigate();
+  const eventMutation = useCreateEvent();
+
   const [eventData, setEventData] = useState({
     name: "",
     price: "",
@@ -54,7 +56,11 @@ const CreateEventPage: React.FC = () => {
       endDate: endDate?.toDate(),
     };
 
-    mutation.mutate(newEvent);
+    eventMutation.mutate(newEvent, {
+      onSuccess: () => {
+        navigator({ to: "/events" });
+      },
+    });
   };
 
   return (
@@ -178,6 +184,7 @@ const CreateEventPage: React.FC = () => {
                       fontWeight: "bold",
                       mt: 2,
                     }}
+                    loading={eventMutation.isPending}
                   >
                     Create Event
                   </Button>
@@ -193,6 +200,6 @@ const CreateEventPage: React.FC = () => {
 
 export default CreateEventPage;
 
-export const Route = createFileRoute("/events/create")({
+export const Route = createFileRoute("/(app)/events/create")({
   component: CreateEventPage,
 });

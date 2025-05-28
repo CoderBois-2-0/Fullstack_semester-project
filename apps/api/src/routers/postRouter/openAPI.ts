@@ -3,7 +3,7 @@ import {
   postSelectSchema,
   postUpdateSchema,
 } from "@/db/handlers/postHandler";
-import { createRoute } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 
 const postResponseSchema = postSelectSchema
   .openapi("Post Response")
@@ -72,6 +72,7 @@ const postPostRoute = createRoute({
         "application/json": {
           schema: postInsertSchema
             .omit({ userId: true })
+            .extend({ createdAt: z.coerce.date() })
             .strict()
             .openapi("Post post request"),
         },

@@ -1,11 +1,15 @@
 class APIClient {
   #baseURL: string;
+  #basePath: string;
 
-  constructor() {
+  constructor(basePath: string) {
     this.#baseURL = import.meta.env.VITE_API_URL;
+    this.#basePath = basePath;
   }
 
-  async get<T>(path: string): Promise<T | null> {
+  async get<T>(extendedPath?: string): Promise<T | null> {
+    const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
+
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "get",
       headers: {
@@ -21,8 +25,10 @@ class APIClient {
     return data;
   }
 
-  async post<T>(path: string, body: Object): Promise<T | null> {
+  async post<T>(body: Object, extendedPath?: string): Promise<T | null> {
+    const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
     const bodyString = JSON.stringify(body);
+
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "post",
       headers: {
@@ -40,8 +46,10 @@ class APIClient {
     return data;
   }
 
-  async put<T>(path: string, body: Object): Promise<T | null> {
+  async put<T>(body: Object, extendedPath?: string): Promise<T | null> {
+    const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
     const bodyString = JSON.stringify(body);
+
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "put",
       headers: {
@@ -59,7 +67,9 @@ class APIClient {
     return data;
   }
 
-  async delete<T>(path: string): Promise<T | null> {
+  async delete<T>(extendedPath?: string): Promise<T | null> {
+    const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
+
     const response = await fetch(`${this.#baseURL}/${path}`, {
       method: "delete",
       headers: {

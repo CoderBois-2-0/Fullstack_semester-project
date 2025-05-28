@@ -1,7 +1,7 @@
 import EventClient from "@/apiClients/eventClient/index";
 import { type TEventCreate } from "@/apiClients/eventClient/dto";
 import { mutateData, queryData } from "./dataHook";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 const QUERY_KEY = "events";
 const eventClient = new EventClient();
@@ -21,7 +21,7 @@ function useEvent(eventId: string) {
 }
 
 function useCreateEvent() {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const mutation = mutateData(
     (newEvent: TEventCreate) => eventClient.createEvent(newEvent),

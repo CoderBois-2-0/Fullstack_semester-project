@@ -1,11 +1,11 @@
+import React, { useState } from "react";
+import { SiSteam, SiDiscord } from "react-icons/si";
 import {
   createFileRoute,
   Link,
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import React, { useState } from "react";
-import { SiSteam, SiDiscord } from "react-icons/si";
 import {
   Box,
   Container,
@@ -18,38 +18,38 @@ import {
   Alert,
   Divider,
   Stack,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
-// Import for icons
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-import AuthClient from "@/apiClients/authClient";
-import useAuthStore from "@/stores/authStore";
 import "@/App.css";
 
-const SignupPage: React.FC = () => {
-  const navigate = useNavigate({ from: "/signup" });
-  const authStore = useAuthStore();
+// Import for icons
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import AuthClient from "@/apiClients/authClient";
+import useAuthStore from "@/stores/authStore";
 
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate({ from: "/login" });
+
+  const authStore = useAuthStore();
   const authClient = new AuthClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isValidating, setIsValidating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [signupError, _setSignupError] = useState("");
+  const [loginError, _setLoginError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await authClient.signUp(email, password, confirmPassword);
+    setIsValidating(true);
+    const result = await authClient.signIn(email, password);
     if (result) {
       authStore.setUser(result);
       navigate({ to: "/events" });
     }
+
+    setIsValidating(false);
   };
 
   return (
@@ -81,13 +81,15 @@ const SignupPage: React.FC = () => {
               color="primary"
               mb={4}
             >
-              Create Account
+              Log In
             </Typography>
-            {signupError && (
+
+            {loginError && (
               <Alert severity="error" sx={{ mb: 3 }}>
-                {signupError}
+                {loginError}
               </Alert>
             )}
+
             <form onSubmit={handleSubmit}>
               <TextField
                 label="Email Address"
@@ -98,6 +100,7 @@ const SignupPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoFocus
               />
 
               <TextField
@@ -126,61 +129,19 @@ const SignupPage: React.FC = () => {
                 }}
               />
 
-              <TextField
-                label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle confirm password visibility"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                          edge="end"
-                        >
-                          {showConfirmPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 1,
+                  mb: 2,
                 }}
-              />
+              >
+                <Link to="/" className="link-style">
+                  Forgot password?
+                </Link>
+              </Box>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={agreeToTerms}
-                    onChange={(e) => setAgreeToTerms(e.target.checked)}
-                    required
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2">
-                    I agree to the{" "}
-                    <Link to="/" className="link-style">
-                      Terms of Service
-                    </Link>{" "}
-                    and{" "}
-                    <Link to="/" className="link-style">
-                      Privacy Policy
-                    </Link>
-                  </Typography>
-                }
-                sx={{ mt: 2 }}
-              />
               <Button
                 type="submit"
                 fullWidth
@@ -190,18 +151,19 @@ const SignupPage: React.FC = () => {
                 sx={{
                   py: 1.5,
                   fontWeight: "bold",
-                  mt: 3,
                   mb: 3,
                 }}
-                disabled={!agreeToTerms}
+                disabled={isValidating}
               >
-                Sign Up
+                Log In
               </Button>
+
               <Divider sx={{ my: 3 }}>
                 <Typography variant="body2" color="text.secondary">
                   OR
                 </Typography>
               </Divider>
+
               <Stack spacing={2}>
                 <Button
                   fullWidth
@@ -209,6 +171,7 @@ const SignupPage: React.FC = () => {
                   color="inherit"
                   startIcon={<SiSteam />}
                   sx={{ py: 1.2 }}
+                  disabled={isValidating}
                 >
                   Continue with Steam
                 </Button>
@@ -222,6 +185,7 @@ const SignupPage: React.FC = () => {
                     color: "#8f9eff",
                     borderColor: "#8f9eff",
                   }}
+                  disabled={isValidating}
                 >
                   Continue with Discord
                 </Button>
@@ -229,9 +193,9 @@ const SignupPage: React.FC = () => {
 
               <Box sx={{ textAlign: "center", mt: 4 }}>
                 <Typography variant="body2">
-                  Already have an account?{" "}
-                  <Link to="/login" className="link-style">
-                    Log in
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="link-style">
+                    Sign up
                   </Link>
                 </Typography>
               </Box>
@@ -243,10 +207,10 @@ const SignupPage: React.FC = () => {
   );
 };
 
-export default SignupPage;
+export default LoginPage;
 
-export const Route = createFileRoute("/signup")({
-  component: SignupPage,
+export const Route = createFileRoute("/(auth)/login")({
+  component: LoginPage,
   loader: async ({ context }) => {
     const isAuthorized = await context.authStore.isAuthenticated();
     if (isAuthorized) {

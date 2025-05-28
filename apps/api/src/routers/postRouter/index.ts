@@ -23,6 +23,10 @@ interface IPostHonoProperties extends IHonoProperties<IPostVariables> {}
  * @var The posts router
  */
 const postRouter = new OpenAPIHono<IPostHonoProperties>()
+  .use(async (c, next) => {
+    c.set("postHandler", new PostHandler(c.env.DB_URL));
+    await next();
+  })
   .route("/", publicRouter)
   .route("/", protectedRouter);
 
