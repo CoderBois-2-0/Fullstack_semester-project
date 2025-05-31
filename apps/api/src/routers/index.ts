@@ -23,9 +23,13 @@ interface IBindings {
    */
   CORS_ORIGIN: string;
   /**
-   * @property The database urlj
+   * @property The database url
    */
   DB_URL: string;
+  /**
+   * @property The stribe secret used to integrate with them
+   */
+  STRIBE_SECRET_KEY: string;
 }
 
 interface IHonoProperties<T> {

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { foreignKey } from "drizzle-orm/pg-core";
+import { foreignKey, primaryKey } from "drizzle-orm/pg-core";
 import { pgEnum, pgTable, real, text, timestamp } from "drizzle-orm/pg-core";
 
 const userRole = pgEnum("user_role", ["GUEST", "ORGANISER", "ADMIN"]);
@@ -21,13 +21,38 @@ const userRelation = relations(userTable, ({ many }) => {
   };
 });
 
+const stribeCustomerTable = pgTable(
+  "stribe_customers",
+  {
+    userId: text("user_id"),
+    stribeCustomerId: text("stribe_customer_id"),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.userId, table.stribeCustomerId],
+    }),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [userTable.id],
+    }),
+  ]
+);
+
+const stribeCustomerRelation = relations(stribeCustomerTable, ({ one }) => {
+  return {
+    user: one(userTable, {
+      fields: [stribeCustomerTable.userId],
+      references: [userTable.id],
+    }),
+  };
+});
+
 const eventTable = pgTable(
   "events",
   {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     description: text("description").notNull(),
-    price: real("price").notNull(),
     location: text("location").notNull(),
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date").notNull(),
@@ -49,6 +74,47 @@ const eventRelation = relations(eventTable, ({ one, many }) => {
     }),
     tickets: many(ticketTable),
     posts: many(postTable),
+  };
+});
+
+const stribeProductEventTable = pgTable(
+  "stribe_product_table",
+  {
+    eventId: text("product_id").notNull().unique(),
+    stribeProductId: text("stribe_product_id").notNull().unique(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.eventId, table.stribeProductId],
+    }),
+    foreignKey({ columns: [table.eventId], foreignColumns: [eventTable.id] }),
+  ]
+);
+
+const stribePriceEventTable = pgTable(
+  "stribe_price_event_table",
+  {
+    stribePriceId: text("stribe_price_id").notNull(),
+    stribeProductId: text("stribe_product_event_id").notNull(),
+    price: real("price").notNull(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.stribePriceId, table.stribeProductId],
+    }),
+    foreignKey({
+      columns: [table.stribeProductId],
+      foreignColumns: [stribeProductEventTable.stribeProductId],
+    }),
+  ]
+);
+
+const stribePriceEventRelation = relations(stribePriceEventTable, ({ one }) => {
+  return {
+    stribeProductEvent: one(stribeProductEventTable, {
+      fields: [stribePriceEventTable.stribeProductId],
+      references: [stribeProductEventTable.stribeProductId],
+    }),
   };
 });
 
@@ -160,6 +226,9 @@ export {
   commentTable,
   eventRelation,
   eventTable,
+  stribeProductEventTable,
+  stribePriceEventRelation,
+  stribePriceEventTable,
   postRelation,
   postTable,
   ticketRelation,
@@ -167,4 +236,6 @@ export {
   userRelation,
   userRole,
   userTable,
+  stribeCustomerTable,
+  stribeCustomerRelation,
 };

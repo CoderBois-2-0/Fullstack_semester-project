@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { getDBClient } from "@/db/index";
-import { userTable } from "@/db//schema";
+import { stribeCustomerTable, userTable } from "@/db//schema";
 import { createSelectSchema } from "drizzle-zod";
+import StribeHandler from "@/stribe";
 
 const userSelectSchema = createSelectSchema(userTable);
 type TUser = z.infer<typeof userSelectSchema>;
@@ -15,9 +16,24 @@ type TSafeUser = z.infer<typeof safeUserSelectSchema>;
 class UserHandler {
   #client: ReturnType<typeof getDBClient>;
   #table = userTable;
+  #customerHandler: UserCustomerHandler;
 
-  constructor(dbUrl: string) {
+  constructor(dbUrl: string, stribeSecretKey: string) {
     this.#client = getDBClient(dbUrl);
+    this.#customerHandler = new UserCustomerHandler(dbUrl, stribeSecretKey);
+  }
+
+  /**
+   * @description
+   * A functions that allows for viewing users
+   * @returns A list of all users
+   */
+  async getUsers(): Promise<TSafeUser[]> {
+    return this.#client.query.userTable.findMany({
+      columns: {
+        password: false,
+      },
+    });
   }
 
   /**
@@ -36,15 +52,37 @@ class UserHandler {
   async createUser(newUser: Omit<TUser, "id">): Promise<TSafeUser | undefined> {
     const userId = crypto.randomUUID();
 
-    const usersInserted = await this.#client
-      .insert(this.#table)
-      .values({
-        ...newUser,
-        id: userId,
-      })
-      .returning();
+    const unsafeUser = await this.#client.transaction(async (tx) => {
+      const usersInserted = await tx
+        .insert(this.#table)
+        .values({
+          ...newUser,
+          id: userId,
+        })
+        .returning();
 
-    const unsafeUser = usersInserted.at(0);
+      const user = usersInserted.at(0);
+      if (!user) {
+        return undefined;
+      }
+
+      // we only create a customer in stribe for guests
+      if (user.role !== "GUEST") {
+        return user;
+      }
+
+      const wasCustomerCreated = await this.#customerHandler.createCustomer(
+        user
+      );
+      if (!wasCustomerCreated) {
+        tx.rollback();
+
+        return undefined;
+      }
+
+      return user;
+    });
+
     if (unsafeUser) {
       return this.#safeTransform(unsafeUser);
     }
@@ -62,4 +100,32 @@ class UserHandler {
   }
 }
 
-export { UserHandler, safeUserSelectSchema, TUser, TSafeUser };
+class UserCustomerHandler {
+  #client: ReturnType<typeof getDBClient>;
+  #table = stribeCustomerTable;
+  #stribeHandler: StribeHandler;
+
+  constructor(dbUrl: string, stribeSecretKey: string) {
+    this.#client = getDBClient(dbUrl);
+    this.#stribeHandler = new StribeHandler(stribeSecretKey);
+  }
+
+  async createCustomer(user: TSafeUser): Promise<boolean> {
+    const customerId = await this.#stribeHandler.createCustomer(user);
+
+    const customersReturned = await this.#client
+      .insert(this.#table)
+      .values({ userId: user.id, stribeCustomerId: customerId })
+      .returning();
+
+    return customersReturned.at(0) !== undefined;
+  }
+}
+
+export {
+  UserHandler,
+  UserCustomerHandler,
+  safeUserSelectSchema,
+  TUser,
+  TSafeUser,
+};

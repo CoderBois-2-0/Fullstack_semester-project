@@ -20,7 +20,10 @@ interface IAuthHonoProperties extends IHonoProperties<IAuthVariables> {}
  */
 const authRouter = new OpenAPIHono<IAuthHonoProperties>()
   .use(async (c, next) => {
-    c.set("userHandler", new UserHandler(c.env.DB_URL));
+    c.set(
+      "userHandler",
+      new UserHandler(c.env.DB_URL, c.env.STRIBE_SECRET_KEY)
+    );
 
     await next();
   })

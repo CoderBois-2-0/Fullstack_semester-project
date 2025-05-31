@@ -7,8 +7,14 @@ import {
 import { z } from "zod";
 
 import { getDBClient } from "@/db/index";
-import { eventTable, ticketTable } from "../schema";
+import {
+  eventTable,
+  ticketTable,
+  stribeProductEventTable,
+  stribePriceEventTable,
+} from "../schema";
 import { TEventGetQuery } from "@/routers/eventRouter/openAPI";
+import StribeHandler from "@/stribe";
 
 const eventSelectSchema = createSelectSchema(eventTable);
 /**
@@ -49,14 +55,16 @@ type TEventUpdate = z.infer<typeof eventUpdateSchema>;
 class EventHandler {
   #client: ReturnType<typeof getDBClient>;
   #table = eventTable;
+  #productHandler: EventProductHandler;
 
   /**
    * @description
    * Will create a new event handler for dealing with database operations in regards to events
    * @param dbUrl - The url used to connect to the database
    */
-  constructor(dbUrl: string) {
+  constructor(dbUrl: string, stribeSecretKey: string) {
     this.#client = getDBClient(dbUrl);
+    this.#productHandler = new EventProductHandler(dbUrl, stribeSecretKey);
   }
 
   /**
@@ -116,17 +124,35 @@ class EventHandler {
    * @param newEvent - The event to insert into the database
    * @returns The newly created event
    */
-  async createEvent(newEvent: TEventInsert) {
+  async createEvent(newEvent: TEventInsert, price: number) {
     const eventId = crypto.randomUUID();
-    const eventsReturned = await this.#client
-      .insert(this.#table)
-      .values({
-        ...newEvent,
-        id: eventId,
-      })
-      .returning();
+    const eventReturned = await this.#client.transaction(async (tx) => {
+      const [event] = await this.#client
+        .insert(this.#table)
+        .values({
+          ...newEvent,
+          id: eventId,
+        })
+        .returning();
 
-    return eventsReturned.at(0);
+      if (!event) {
+        return undefined;
+      }
+
+      const wasProductCreated = await this.#productHandler.createProduct(
+        event,
+        price
+      );
+      if (!wasProductCreated) {
+        tx.rollback();
+
+        return undefined;
+      }
+
+      return event;
+    });
+
+    return eventReturned;
   }
 
   /**
@@ -172,8 +198,61 @@ class EventHandler {
   }
 }
 
+/**
+ * @description
+ * A event product handler that is responsible for the event relevant data from stribe
+ */
+class EventProductHandler {
+  #client: ReturnType<typeof getDBClient>;
+  #stribeHandler: StribeHandler;
+  #productTable = stribeProductEventTable;
+  #priceTable = stribePriceEventTable;
+
+  constructor(dbUrl: string, stribeSecretKey: string) {
+    this.#client = getDBClient(dbUrl);
+    this.#stribeHandler = new StribeHandler(stribeSecretKey);
+  }
+
+  async createProduct(event: TEvent, price: number) {
+    const eventProductResponse = await this.#stribeHandler.createProduct(
+      event,
+      price
+    );
+
+    const wasProductedCreated = this.#client.transaction(async (tx) => {
+      const [eventProduct] = await tx
+        .insert(this.#productTable)
+        .values({
+          eventId: event.id,
+          stribeProductId: eventProductResponse.productId,
+        })
+        .returning();
+
+      const [eventPrice] = await tx
+        .insert(this.#priceTable)
+        .values({
+          stribeProductId: eventProductResponse.productId,
+          stribePriceId: eventProductResponse.priceId,
+          price,
+        })
+        .returning();
+
+      if (!eventProduct || !eventPrice) {
+        tx.rollback();
+
+        return false;
+      }
+
+      return true;
+    });
+
+    return wasProductedCreated;
+  }
+}
+
 export {
   EventHandler,
+  EventProductHandler,
   eventInsertSchema,
   eventUpdateSchema,
   eventSelectSchema,

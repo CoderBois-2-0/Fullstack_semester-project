@@ -24,7 +24,10 @@ interface IEventHonoProperties extends IHonoProperties<IEventVariables> {}
  */
 const eventRouter = new OpenAPIHono<IEventHonoProperties>()
   .use(async (c, next) => {
-    c.set("eventHandler", new EventHandler(c.env.DB_URL));
+    c.set(
+      "eventHandler",
+      new EventHandler(c.env.DB_URL, c.env.STRIBE_SECRET_KEY)
+    );
 
     await next();
   })
