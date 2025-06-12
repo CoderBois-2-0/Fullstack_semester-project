@@ -9,6 +9,8 @@ import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import useAuthStore from "./stores/authStore.ts";
 
+import { CustomThemeProvider } from "./theme/ThemeContext"; // <-- Your provider
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
@@ -33,9 +35,9 @@ function App() {
   const authStore = useAuthStore();
 
   return (
-    <StrictMode>
+    <CustomThemeProvider>
       <RouterProvider router={router} context={{ authStore }} />
-    </StrictMode>
+    </CustomThemeProvider>
   );
 }
 
@@ -43,11 +45,11 @@ function App() {
 const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
 }
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

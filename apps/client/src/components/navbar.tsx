@@ -16,10 +16,10 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import useAuthStore from "@/stores/authStore";
+import { ThemeToggleButton } from "./themeToggleButton"; // 👈 Import the toggle button
 
 const Navbar: React.FC = () => {
   const authStore = useAuthStore();
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -52,10 +52,11 @@ const Navbar: React.FC = () => {
       color="default"
       elevation={0}
       sx={{
-        backgroundColor: "white",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
-      }}
-    >
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        boxShadow: theme.shadows[4],
+        }}
+        >
       <Toolbar>
         {/* Logo */}
         <Typography
@@ -69,7 +70,7 @@ const Navbar: React.FC = () => {
             fontSize: "1.5rem",
             textDecoration: "none",
             cursor: "pointer",
-            fontFamily: '"Press Start 2P", monospace', // Gaming font
+            fontFamily: '"Press Start 2P", monospace',
             letterSpacing: "1px",
             textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
             "&:hover": {
@@ -83,7 +84,7 @@ const Navbar: React.FC = () => {
 
         {/* Navbar Buttons */}
         {!isMobile ? (
-          <Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Link to="/events">
               <Button sx={{ mr: 1 }}>Events</Button>
             </Link>
@@ -99,6 +100,7 @@ const Navbar: React.FC = () => {
             >
               Organiser
             </Button>
+
             <Menu
               id="organiser-menu"
               anchorEl={anchorEl}
@@ -137,16 +139,19 @@ const Navbar: React.FC = () => {
             </Menu>
 
             {isAuthenticated ? (
-              <Button variant="contained" color="info" onClick={signOut}>
+              <Button variant="contained" color="info" onClick={signOut} sx={{ mr: 1 }}>
                 Sign out
               </Button>
             ) : (
               <Link to="/login">
-                <Button variant="contained" color="info">
+                <Button variant="contained" color="info" sx={{ mr: 1 }}>
                   Log In
                 </Button>
               </Link>
             )}
+
+            {/* 🌙 Dark Mode Toggle */}
+            <ThemeToggleButton />
           </Box>
         ) : (
           <IconButton size="large" edge="end" color="inherit" aria-label="menu">
