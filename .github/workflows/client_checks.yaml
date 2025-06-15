@@ -1,0 +1,38 @@
+name: Client Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    #paths:
+    #  - apps/client/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Client build
+    env:
+      PROJECT: client
+      VITE_API_URL: https://queue-up-api.sid-doro-hd.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm --filter $PROJECT install
+
+      - name: Build
+        run: pnpm --filter $PROJECT build
