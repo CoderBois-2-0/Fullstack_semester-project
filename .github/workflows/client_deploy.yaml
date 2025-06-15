@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - main
+    pull_requests:
+      - main
     paths:
       - apps/client/**
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Client deploy
+    name: Client build
     env:
       PROJECT: client
       VITE_API_URL: https://queue-up-api.sid-doro-hd.workers.dev
@@ -33,6 +35,12 @@ jobs:
 
       - name: Build
         run: pnpm --filter $PROJECT build
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Client deploy
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
