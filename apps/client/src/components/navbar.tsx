@@ -55,8 +55,8 @@ const Navbar: React.FC = () => {
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
         boxShadow: theme.shadows[4],
-        }}
-        >
+      }}
+    >
       <Toolbar>
         {/* Logo */}
         <Typography
@@ -124,22 +124,15 @@ const Navbar: React.FC = () => {
                   Create Event
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleDropdownClose}>
-                <Link
-                  to="/create-post"
-                  style={{
-                    textDecoration: "none",
-                    color: "inherit",
-                    width: "100%",
-                  }}
-                >
-                  Create Post
-                </Link>
-              </MenuItem>
             </Menu>
 
             {isAuthenticated ? (
-              <Button variant="contained" color="info" onClick={signOut} sx={{ mr: 1 }}>
+              <Button
+                variant="contained"
+                color="info"
+                onClick={signOut}
+                sx={{ mr: 1 }}
+              >
                 Sign out
               </Button>
             ) : (
