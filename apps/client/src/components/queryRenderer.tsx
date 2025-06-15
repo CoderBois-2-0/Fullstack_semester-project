@@ -3,7 +3,7 @@ import { type UseQueryResult } from "@tanstack/react-query";
 
 function QueryRenderer<T>(props: {
   query: UseQueryResult<T, Error>;
-  renderFn: (data: T) => ReactNode;
+  renderFn: (data: NonNullable<T>) => ReactNode;
   noDataRender?: () => ReactNode;
 }) {
   if (props.query.data) {
