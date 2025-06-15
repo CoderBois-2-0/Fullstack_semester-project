@@ -6,8 +6,8 @@ on:
       - main
     pull_requests:
       - main
-    paths:
-      - apps/client/**
+    #paths:
+    #  - apps/client/**
 
 jobs:
   build:
