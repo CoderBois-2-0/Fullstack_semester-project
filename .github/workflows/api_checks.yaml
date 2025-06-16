@@ -1,0 +1,36 @@
+name: API checks
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/api/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm --filter $PROJECT install
+
+      - name: Build
+        run: pnpm --filter $PROJECT build
