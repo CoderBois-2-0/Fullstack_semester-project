@@ -27,7 +27,6 @@ const eventTable = pgTable(
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     description: text("description").notNull(),
-    price: real("price").notNull(),
     location: text("location").notNull(),
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date").notNull(),
