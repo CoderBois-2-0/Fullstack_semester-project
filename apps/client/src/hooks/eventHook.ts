@@ -1,7 +1,7 @@
 import EventClient from "@/apiClients/eventClient/index";
 import { type TEventCreate } from "@/apiClients/eventClient/dto";
 import { mutateData, queryData } from "./dataHook";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const QUERY_KEY = "events";
 const eventClient = new EventClient();
