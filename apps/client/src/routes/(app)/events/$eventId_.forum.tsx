@@ -8,6 +8,8 @@ import {
   CardContent,
   CardHeader,
   TextField,
+  Typography,
+  Divider,
 } from "@mui/material";
 import { useCreatePost, usePosts } from "@/hooks/postHook";
 import QueryRenderer from "@/components/queryRenderer";
@@ -24,6 +26,8 @@ export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
   },
   component: RouteComponent,
 });
+
+
 
 function PostsQuery(props: { posts: IPost[]; eventId: string }) {
   const handleLike = (postId: string) => {
@@ -45,9 +49,14 @@ function PostsQuery(props: { posts: IPost[]; eventId: string }) {
     };
   };
 
+  // Sort posts by creation date - newest first
+  const sortedPosts = [...props.posts].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   return (
     <>
-      {props.posts.map((post) => (
+      {sortedPosts.map((post) => (
         <EventPost
           key={post.id}
           post={{
@@ -105,39 +114,89 @@ function RouteComponent() {
       }}
     >
       <Box width="50%" display="flex" flexDirection="column" gap={3}>
-        <Card>
-          <CardHeader title="No chargers at your seat or just enjoying the event?" />
+        <Card 
+          sx={{ 
+            transition: 'box-shadow 0.3s ease',
+            '&:hover': {
+              boxShadow: (theme) => theme.shadows[4],
+            },
+          }}
+        >
+          <CardHeader 
+            title={
+              <Typography variant="subtitle1" fontWeight={600}>
+                Share something about this event
+              </Typography>
+            }
+            subheader={
+              <Typography variant="body2" color="text.secondary">
+                What's on your mind?
+              </Typography>
+            }
+          />
 
-          <CardContent
-            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-          >
-            <TextField
-              placeholder="Title"
-              value={postData.title}
-              onChange={(event) =>
-                setPostData({ ...postData, title: event.target.value })
-              }
-            />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                placeholder="Post title..."
+                value={postData.title}
+                onChange={(event) =>
+                  setPostData({ ...postData, title: event.target.value })
+                }
+                variant="outlined"
+                fullWidth
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                  },
+                }}
+              />
 
-            <TextField
-              value={postData.content}
-              onChange={(event) =>
-                setPostData({ ...postData, content: event.target.value })
-              }
-              multiline
-              placeholder="Whats on your heart?"
-              fullWidth
-              rows={3}
-            />
+              <TextField
+                value={postData.content}
+                onChange={(event) =>
+                  setPostData({ ...postData, content: event.target.value })
+                }
+                multiline
+                placeholder="Share your thoughts about this event..."
+                fullWidth
+                rows={3}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                  },
+                }}
+              />
+            </Box>
           </CardContent>
 
-          <CardActions sx={{ justifyContent: "end" }}>
+          <Divider />
+
+          <CardActions sx={{ justifyContent: "space-between", px: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              {postData.title.length > 0 || postData.content.length > 0 
+                ? `${postData.title.length + postData.content.length} characters` 
+                : 'Start typing to create your post'}
+            </Typography>
+            
             <Button
               variant="contained"
               onClick={createPost}
-              disabled={postMutation.isPending}
+              disabled={postMutation.isPending || (!postData.title.trim() && !postData.content.trim())}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 3,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                },
+              }}
             >
-              Create post
+              {postMutation.isPending ? 'Creating...' : 'Create Post'}
             </Button>
           </CardActions>
         </Card>
