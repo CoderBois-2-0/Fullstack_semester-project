@@ -13,8 +13,6 @@ import { useCreatePost, usePosts } from "@/hooks/postHook";
 import QueryRenderer from "@/components/queryRenderer";
 import EventPost from "@/components/eventPost";
 import type { IPost, IPostRequest } from "@/apiClients/postClient/dto";
-import useAuthStore from "@/stores/authStore";
-
 export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
   loader: async ({ context }) => {
     const isAuthenticated = await context.authStore.isAuthenticated();
@@ -33,7 +31,7 @@ function PostsQuery(props: { posts: IPost[]; eventId: string }) {
     // TODO: Implement your like API call
   };
 
-  const handleComment = (postId: string, comment: string) => {
+  const handleComment = (comment: string) => {
     console.log("Comment:", comment);
     // TODO: Implement your comment API call
   };
@@ -73,7 +71,6 @@ function PostsQuery(props: { posts: IPost[]; eventId: string }) {
 
 function RouteComponent() {
   const { eventId } = Route.useParams();
-  const authStore = useAuthStore();
   const postQuery = usePosts(eventId);
   const postMutation = useCreatePost();
 
