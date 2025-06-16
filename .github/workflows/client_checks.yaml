@@ -7,13 +7,13 @@ on:
   pull_request:
     branches:
       - main
-    #paths:
-    #  - apps/client/**
+    paths:
+      - apps/client/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Client build
+    name: Build
     env:
       PROJECT: client
       VITE_API_URL: https://queue-up-api.sid-doro-hd.workers.dev
