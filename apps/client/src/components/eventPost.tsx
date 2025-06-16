@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Card,
   CardHeader,
@@ -15,7 +15,6 @@ import {
   Divider,
   Paper,
   Fade,
-  Slide,
 } from '@mui/material';
 import {
   MoreVert as MoreVertIcon,
@@ -61,7 +60,7 @@ const AnimatedComment = styled(Paper)(({ theme }) => ({
   animation: `${slideInUp} 0.4s ease-out`,
   marginBottom: theme.spacing(1),
   padding: theme.spacing(1.5),
-  backgroundColor: theme.palette.grey[50],
+  backgroundColor: theme.palette.background.default,
   position: 'relative',
   '&::before': {
     content: '""',
@@ -78,10 +77,9 @@ const AnimatedComment = styled(Paper)(({ theme }) => ({
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(2),
-  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   transition: 'box-shadow 0.3s ease',
   '&:hover': {
-    boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+    boxShadow: theme.shadows[4],
   },
 }));
 
@@ -115,7 +113,6 @@ interface EventPostProps {
   onLike?: (postId: string) => void;
   onComment?: (postId: string, comment: string) => void;
   initialComments?: Comment[];
-  currentUserId?: string;
 }
 
 const EventPost: React.FC<EventPostProps> = ({
@@ -125,7 +122,6 @@ const EventPost: React.FC<EventPostProps> = ({
   onLike,
   onComment,
   initialComments = [],
-  currentUserId,
 }) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>(initialComments);
@@ -145,7 +141,7 @@ const EventPost: React.FC<EventPostProps> = ({
       const comment: Comment = {
         id: Date.now().toString(),
         content: newComment.trim(),
-        author: 'Current User', // You can pass current user name as prop
+        author: 'Current User',
         createdAt: new Date(),
       };
       
@@ -153,7 +149,6 @@ const EventPost: React.FC<EventPostProps> = ({
       setNewComment('');
       onComment?.(post.id, comment.content);
       
-      // Auto-expand comments when adding a new one
       if (!showComments) {
         setShowComments(true);
       }
@@ -277,7 +272,6 @@ const EventPost: React.FC<EventPostProps> = ({
         <Box sx={{ px: 2, pb: 2 }}>
           <Divider sx={{ mb: 2 }} />
           
-          {/* Comment Input */}
           <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'flex-end' }}>
             <TextField
               ref={commentInputRef}
@@ -287,13 +281,13 @@ const EventPost: React.FC<EventPostProps> = ({
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              onKeyPress={handleCommentKeyPress}
+              onKeyDown={handleCommentKeyPress}
               variant="outlined"
               size="small"
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 3,
-                  backgroundColor: 'grey.50',
+                  backgroundColor: 'background.paper',
                 },
               }}
             />
@@ -312,7 +306,6 @@ const EventPost: React.FC<EventPostProps> = ({
             </IconButton>
           </Box>
 
-          {/* Comments List */}
           <Box sx={{ maxHeight: 400, overflowY: 'auto' }}>
             {comments.map((comment, index) => (
               <Fade

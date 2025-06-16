@@ -1,144 +1,155 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Box, Container, Typography, Button, Paper } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
-import { useEvent } from "@/hooks/eventHook";
-import type { IEvent } from "@/apiClients/eventClient/dto";
-import CardSkeleton from "@/components/cardSkeleton";
+import React, { useState } from "react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Button,
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  TextField,
+} from "@mui/material";
+import { useCreatePost, usePosts } from "@/hooks/postHook";
 import QueryRenderer from "@/components/queryRenderer";
 import EventPost from "@/components/eventPost";
+import type { IPost, IPostRequest } from "@/apiClients/postClient/dto";
+import useAuthStore from "@/stores/authStore";
 
-const EventDetail = (props: { event: IEvent }) => {
-  const event = props.event;
+export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
+  loader: async ({ context }) => {
+    const isAuthenticated = await context.authStore.isAuthenticated();
+    if (!isAuthenticated) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
+  component: RouteComponent,
+});
+
+function PostsQuery(props: { posts: IPost[]; eventId: string }) {
+  const handleLike = (postId: string) => {
+    console.log("Liked:", postId);
+    // TODO: Implement your like API call
+  };
+
+  const handleComment = (postId: string, comment: string) => {
+    console.log("Comment:", comment);
+    // TODO: Implement your comment API call
+  };
+
+  // TODO: You'll need to get user data for each post
+  // For now using placeholder data - replace with your user fetching logic
+  const getUserForPost = (userId: string) => {
+    return {
+      id: userId,
+      name: "User", // Replace with actual user name from your user API
+    };
+  };
 
   return (
     <>
-      <Box
-        sx={{
-          height: "300px",
-          position: "relative",
-          background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(default-event-image.png)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography
-          variant="h3"
-          component="h1"
-          sx={{ color: "white", fontWeight: "bold", textAlign: "center" }}
-        >
-          {event.name}
-        </Typography>
-      </Box>
-
-      {/* Main Content */}
-      <Container maxWidth="md" sx={{ my: 5 }}>
-        {/* Description */}
-        <Paper sx={{ p: 4, mb: 4 }}>
-          <Typography variant="h5" sx={{ mb: 3 }}>
-            About this event
-          </Typography>
-        </Paper>
-
-        {/* Price and Buy Ticket */}
-        <Paper
-          sx={{
-            p: 4,
-            mb: 4,
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: "space-between",
-            alignItems: { xs: "flex-start", sm: "center" },
-          }}
-        >
-          <Box sx={{ mb: { xs: 2, sm: 0 } }}>
-            <Typography variant="subtitle1" color="text.secondary">
-              Price
-            </Typography>
-            <Typography variant="h5" fontWeight="bold">
-              {event.price || "Free"}
-            </Typography>
-          </Box>
-
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ px: 4 }}
-          >
-            Buy Ticket
-          </Button>
-        </Paper>
-
-        {/* Example of how to use EventPost component */}
-        {/* Replace this with your actual posts data */}
+      {props.posts.map((post) => (
         <EventPost
+          key={post.id}
           post={{
-            id: "test-post",
-            title: "Test Post",
-            content: "This is a test post to see the EventPost component working!",
-            createdAt: new Date(),
-            eventId: event.id,
-            userId: "test-user"
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            createdAt: new Date(post.createdAt),
+            eventId: post.eventId,
+            userId: post.userId,
           }}
-          user={{
-            id: "test-user",
-            name: "Test User"
-          }}
-          eventName={event.name}
-          onLike={(postId) => console.log("Liked:", postId)}
-          onComment={(postId, comment) => console.log("Comment:", comment)}
+          user={getUserForPost(post.userId)}
+          eventName="Event" // TODO: Pass actual event name if needed
+          onLike={handleLike}
+          onComment={handleComment}
+          initialComments={[]} // TODO: Fetch comments for each post
         />
-      </Container>
+      ))}
     </>
   );
-};
+}
 
-// Main component that displays event details
-const EventPage = () => {
-  // Extract event ID from URL
+function RouteComponent() {
   const { eventId } = Route.useParams();
-  const eventQuery = useEvent(eventId);
+  const authStore = useAuthStore();
+  const postQuery = usePosts(eventId);
+  const postMutation = useCreatePost();
+
+  const [postData, setPostData] = useState({
+    title: "",
+    content: "",
+  });
+
+  function createPost(e: React.FormEvent) {
+    e.preventDefault();
+
+    const newPost: IPostRequest = {
+      ...postData,
+      eventId,
+      createdAt: new Date().toISOString(),
+    };
+
+    postMutation.mutate(newPost, {
+      onSuccess: () => {
+        setPostData({ title: "", content: "" });
+      },
+    });
+  }
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      pt={2}
-      px={35}
-      gap={2}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        minHeight: "100vh",
+        paddingTop: 3,
+      }}
     >
-      {eventQuery.isLoading ? (
-        <CardSkeleton />
-      ) : (
-        <QueryRenderer
-          query={eventQuery}
-          renderFn={(event) => <EventDetail event={event} />}
-        />
-      )}
+      <Box width="50%" display="flex" flexDirection="column" gap={3}>
+        <Card>
+          <CardHeader title="No chargers at your seat or just enjoying the event?" />
 
-      {!eventQuery.isLoading && (
-        <Link to="/events">
-          <Button
-            startIcon={<ArrowBackIcon />}
-            variant="outlined"
-            sx={{ mb: 4 }}
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
           >
-            Back to Events
-          </Button>
-        </Link>
-      )}
+            <TextField
+              placeholder="Title"
+              value={postData.title}
+              onChange={(event) =>
+                setPostData({ ...postData, title: event.target.value })
+              }
+            />
+
+            <TextField
+              value={postData.content}
+              onChange={(event) =>
+                setPostData({ ...postData, content: event.target.value })
+              }
+              multiline
+              placeholder="Whats on your heart?"
+              fullWidth
+              rows={3}
+            />
+          </CardContent>
+
+          <CardActions sx={{ justifyContent: "end" }}>
+            <Button
+              variant="contained"
+              onClick={createPost}
+              disabled={postMutation.isPending}
+            >
+              Create post
+            </Button>
+          </CardActions>
+        </Card>
+
+        <QueryRenderer
+          query={postQuery}
+          renderFn={(data) => <PostsQuery posts={data} eventId={eventId} />}
+        />
+      </Box>
     </Box>
   );
-};
-
-export default EventPage;
-
-// Route definition for TanStack Router
-export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
-  component: EventPage,
-});
+}
