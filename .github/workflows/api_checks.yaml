@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: API build
     runs-on: ubuntu-latest
     env:
       PROJECT: api
