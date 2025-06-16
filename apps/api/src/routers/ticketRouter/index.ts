@@ -24,7 +24,10 @@ interface ITicketHonoProperties extends IHonoProperties<ITicketVariables> {}
 const ticketRouter = new OpenAPIHono<ITicketHonoProperties>()
 
   .use(async (c, next) => {
-    c.set("ticketHandler", new TicketHandler(c.env.DB_URL));
+    c.set(
+      "ticketHandler",
+      new TicketHandler(c.env.DB_URL, c.env.STRIBE_SECRET_KEY)
+    );
 
     await next();
   })

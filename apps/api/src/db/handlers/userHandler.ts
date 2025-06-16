@@ -90,6 +90,10 @@ class UserHandler {
     return unsafeUser;
   }
 
+  async findUserCustomerByUserId(userId: string) {
+    return this.#customerHandler.findCustomerByUserId(userId);
+  }
+
   /**
    * Transforms an user to a safe user
    */
@@ -108,6 +112,14 @@ class UserCustomerHandler {
   constructor(dbUrl: string, stribeSecretKey: string) {
     this.#client = getDBClient(dbUrl);
     this.#stribeHandler = new StribeHandler(stribeSecretKey);
+  }
+
+  async findCustomerByUserId(userId: string) {
+    const customer = this.#client.query.stribeCustomerTable.findFirst({
+      where: (customer, { eq }) => eq(customer.userId, userId),
+    });
+
+    return customer;
   }
 
   async createCustomer(user: TSafeUser): Promise<boolean> {

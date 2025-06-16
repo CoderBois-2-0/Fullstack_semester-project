@@ -51,6 +51,26 @@ class StribeHandler {
 
     return { productId: productResponse.id, priceId: priceResponse.id };
   }
+
+  async createSession(
+    customerId: string,
+    product: { priceId: string; quantity: number },
+    urls: { success: string; cancel: string }
+  ) {
+    const sessionResponse = await this.#s.checkout.sessions.create(
+      {
+        payment_method_types: ["card"],
+        customer: customerId,
+        line_items: [{ price: product.priceId, quantity: product.quantity }],
+        mode: "payment",
+        success_url: urls.success,
+        cancel_url: urls.cancel,
+      },
+      undefined
+    );
+
+    return sessionResponse.url;
+  }
 }
 
 export default StribeHandler;

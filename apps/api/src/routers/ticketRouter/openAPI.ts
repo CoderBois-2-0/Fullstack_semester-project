@@ -101,7 +101,11 @@ const ticketPostRoute = createRoute({
       description: "The new ticket was created",
       content: {
         "application/json": {
-          schema: ticketResponseSchema,
+          schema: ticketResponseSchema.extend({
+            ticketSession: z
+              .string()
+              .openapi({ description: "The stribe session used for checkout" }),
+          }),
         },
       },
     },

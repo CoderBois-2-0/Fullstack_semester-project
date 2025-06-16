@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { foreignKey, primaryKey } from "drizzle-orm/pg-core";
+import { foreignKey, integer, primaryKey } from "drizzle-orm/pg-core";
 import { pgEnum, pgTable, real, text, timestamp } from "drizzle-orm/pg-core";
 
 const userRole = pgEnum("user_role", ["GUEST", "ORGANISER", "ADMIN"]);
@@ -24,8 +24,8 @@ const userRelation = relations(userTable, ({ many }) => {
 const stribeCustomerTable = pgTable(
   "stribe_customers",
   {
-    userId: text("user_id"),
-    stribeCustomerId: text("stribe_customer_id"),
+    userId: text("user_id").notNull(),
+    stribeCustomerId: text("stribe_customer_id").notNull(),
   },
   (table) => [
     primaryKey({
@@ -91,6 +91,15 @@ const stribeProductEventTable = pgTable(
   ]
 );
 
+const stribeProductEventRelation = relations(
+  stribeProductEventTable,
+  ({ many }) => {
+    return {
+      eventPrices: many(stribePriceEventTable),
+    };
+  }
+);
+
 const stribePriceEventTable = pgTable(
   "stribe_price_event_table",
   {
@@ -118,10 +127,18 @@ const stribePriceEventRelation = relations(stribePriceEventTable, ({ one }) => {
   };
 });
 
+const ticketStateKind = pgEnum("ticket_state_kind", [
+  "PENDING",
+  "COMPLETED",
+  "CANCELED",
+]);
+
 const ticketTable = pgTable(
   "tickets",
   {
     id: text("id").primaryKey(),
+    quantity: integer("quantity").notNull(),
+    stateKind: ticketStateKind("ticket_state_kinticket_state_kindd"),
     eventId: text("event_id").notNull(),
     userId: text("user_id").notNull(),
   },
@@ -227,10 +244,12 @@ export {
   eventRelation,
   eventTable,
   stribeProductEventTable,
+  stribeProductEventRelation,
   stribePriceEventRelation,
   stribePriceEventTable,
   postRelation,
   postTable,
+  ticketStateKind,
   ticketRelation,
   ticketTable,
   userRelation,
