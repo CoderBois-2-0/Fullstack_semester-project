@@ -4,7 +4,8 @@ import { postGetByIdRoute, postGetRoute } from "./openAPI";
 import { IPostHonoProperties } from "./index";
 
 /**
- * @var The public posts router
+ * @description
+ * The public posts router
  */
 const publicRouter = new OpenAPIHono<IPostHonoProperties>()
   .openapi(postGetRoute, async (c) => {

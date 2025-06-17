@@ -93,7 +93,5 @@ app
   .route("/posts", postRouter)
   .route("/comments", commentRouter);
 
-console.log(app.routes);
-
 export default app;
 export { IHonoProperties };

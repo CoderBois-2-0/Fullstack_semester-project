@@ -1,7 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
 import { IHonoProperties } from "@/routers/index";
-import { EventHandler } from "@/db/handlers/eventHandler";
+import { EventHandler } from "@/db/handlers/eventHandler/index";
 import eventPublicRouter from "./public";
 import eventProtectedRouter from "./protected";
 

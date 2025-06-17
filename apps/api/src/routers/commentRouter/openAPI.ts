@@ -1,14 +1,13 @@
 import {
   commentInsertSchema,
-  commentSelectSchema,
   commentUpdateSchema,
-} from "@/db/handlers/commentHandler";
+} from "@/db/handlers/commentHandler/dto";
 import { createRoute } from "@hono/zod-openapi";
-
-const commentResponseSchema = commentSelectSchema.openapi("Comment Response");
+import { commentResponseSchema } from "./dto";
 
 /**
- * @var The openAPI spec for the get route for comments
+ * @description
+ * The openAPI spec for the get route for comments
  */
 const commentGetRoute = createRoute({
   description: "Retrieves all comments",

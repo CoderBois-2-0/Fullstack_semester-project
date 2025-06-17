@@ -2,7 +2,7 @@ import {
   eventInsertSchema,
   eventSelectSchema,
   eventUpdateSchema,
-} from "@/db/handlers/eventHandler";
+} from "@/db/handlers/eventHandler/index";
 import { createRoute, z } from "@hono/zod-openapi";
 
 const eventResponseSchema = eventSelectSchema.openapi("Event");
