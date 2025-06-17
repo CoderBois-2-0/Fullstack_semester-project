@@ -13,7 +13,7 @@ const ticketSelectSchema = createSelectSchema(ticketTable);
  * @description
  * The type for a ticket when using select
  */
-type TTicket = typeof ticketSelectSchema;
+type TTicket = z.infer<typeof ticketSelectSchema>;
 
 /**
  * @description
@@ -56,9 +56,19 @@ class TicketHandler {
    * Will create a new ticket handler for dealing with database operations in regards to tickets
    * @param dbUrl - The url used to connect to the database
    */
-  constructor(dbUrl: string, stribeSecretKey: string) {
+  constructor(
+    dbUrl: string,
+    stribeSecretKey: string,
+    baseUrl: string,
+    clientUrl: string
+  ) {
     this.#client = getDBClient(dbUrl);
-    this.#sessionHandler = new TicketSessionHandler(dbUrl, stribeSecretKey);
+    this.#sessionHandler = new TicketSessionHandler(
+      dbUrl,
+      stribeSecretKey,
+      baseUrl,
+      clientUrl
+    );
   }
 
   /**
@@ -121,11 +131,7 @@ class TicketHandler {
    * @param newTicket - The ticket to insert into the database
    * @returns The newly created ticket
    */
-  async createTicket(
-    userId: string,
-    customerId: string,
-    newTicket: Omit<TTicketInsert, "userId">
-  ) {
+  async createTicket(userId: string, newTicket: Omit<TTicketInsert, "userId">) {
     const eventId = crypto.randomUUID();
     const ticketsReturned = await this.#client
       .insert(this.#table)
@@ -142,18 +148,25 @@ class TicketHandler {
       return undefined;
     }
 
-    const ticketSession = await this.#sessionHandler.createSession(customerId, {
-      id: ticket.eventId,
-      ticketQuantity: ticket.quantity,
-    });
-    if (!ticketSession) {
-      return undefined;
-    }
+    return ticket;
+  }
 
-    return {
+  /**
+   * @description
+   * Creates a stribe session from a pending ticket
+   * @param customerId - The stribe customer id
+   * @param ticket - The ticket to associated with the session
+   * @param key - The key to authenticate with when returning from stribe
+   * @returns The stribe session
+   */
+  async creatSession(customerId: string, ticket: TTicket, key: string) {
+    const ticketSession = await this.#sessionHandler.createSession(
+      customerId,
       ticket,
-      ticketSession,
-    };
+      key
+    );
+
+    return ticketSession;
   }
 
   /**
@@ -190,22 +203,37 @@ class TicketHandler {
 }
 
 class TicketSessionHandler {
+  #baseUrl: string;
+  #clientUrl: string;
   #stribeHandler: StribeHandler;
   #client: ReturnType<typeof getDBClient>;
 
-  constructor(dbUrl: string, stribeSecretKey: string) {
+  constructor(
+    dbUrl: string,
+    stribeSecretKey: string,
+    baseUrl: string,
+    clientUrl: string
+  ) {
     this.#stribeHandler = new StribeHandler(stribeSecretKey);
     this.#client = getDBClient(dbUrl);
+    this.#baseUrl = baseUrl;
+    this.#clientUrl = clientUrl;
   }
 
-  async createSession(
-    customerId: string,
-    event: { id: string; ticketQuantity: number }
-  ) {
+  /**
+   * @description
+   * Will create a stribe session to buy a ticket with
+   * @param customerId - The stribe customer id
+   * @param ticket - The ticket to buy
+   * @param key - The key used to authenticate when returning succesfully from stribe
+   * @returns The stribe session
+   */
+  async createSession(customerId: string, ticket: TTicket, key: string) {
     const stribeProductEvent =
       await this.#client.query.stribeProductEventTable.findFirst({
         columns: {},
-        where: (eventProduct, { eq }) => eq(eventProduct.eventId, event.id),
+        where: (eventProduct, { eq }) =>
+          eq(eventProduct.eventId, ticket.eventId),
         with: {
           eventPrices: true,
         },
@@ -221,8 +249,11 @@ class TicketSessionHandler {
 
     const session = await this.#stribeHandler.createSession(
       customerId,
-      { priceId: stribePrice.stribePriceId, quantity: event.ticketQuantity },
-      { success: "http://localhost:3000/", cancel: "http://localhost:3000/" }
+      { priceId: stribePrice.stribePriceId, quantity: ticket.quantity },
+      {
+        success: `${this.#baseUrl}/tickets/stribe-cb?key=${key}`,
+        cancel: `${this.#clientUrl}/${ticket.eventId}`,
+      }
     );
 
     return session;

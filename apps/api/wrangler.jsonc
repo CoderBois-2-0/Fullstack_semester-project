@@ -6,16 +6,16 @@
   "compatibility_flags": [
     "nodejs_compat",
     "no_handle_cross_request_promise_resolution"
-  ]
+  ],
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
+  "kv_namespaces": [
+    {
+      "binding": "TICKET_KEYS",
+      "id": "61625152c16c41f1bb33e9b9a8de42da"
+    }
+  ]
   // "r2_buckets": [
   //   {
   //     "binding": "MY_BUCKET",

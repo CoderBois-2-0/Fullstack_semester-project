@@ -208,7 +208,12 @@ class EventProductHandler {
   #productTable = stribeProductEventTable;
   #priceTable = stribePriceEventTable;
 
-  constructor(dbUrl: string, stribeSecretKey: string) {
+  constructor(
+    dbUrl: string,
+    stribeSecretKey: string,
+    baseUrl: string,
+    clientUrl: string
+  ) {
     this.#client = getDBClient(dbUrl);
     this.#stribeHandler = new StribeHandler(stribeSecretKey);
   }

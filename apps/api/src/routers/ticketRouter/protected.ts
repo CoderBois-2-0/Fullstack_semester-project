@@ -66,20 +66,22 @@ protectedRouter
     if (!customer) {
       return c.json({ data: "" }, 500);
     }
-    const ticket = await ticketHandler.createTicket(
-      user.id,
-      customer.stribeCustomerId,
-      {
-        ...newTicket,
-      }
-    );
+    const ticket = await ticketHandler.createTicket(user.id, newTicket);
     if (!ticket) {
       return c.json({ data: "Could not create ticket" }, 500);
     }
 
+    const key = crypto.randomUUID();
+    await c.env.TICKET_KEYS.put(key, ticket.id);
+    const ticketSession = await ticketHandler.creatSession(
+      customer.stribeCustomerId,
+      ticket,
+      key
+    );
+
     return c.json({
-      ticket: ticket.ticket,
-      ticketSession: ticket.ticketSession,
+      ticket,
+      ticketSession,
     });
   })
   .openapi(ticketPutRoute, async (c) => {

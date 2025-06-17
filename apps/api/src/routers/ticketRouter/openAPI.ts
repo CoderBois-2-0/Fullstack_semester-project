@@ -155,6 +155,34 @@ const ticketPutRoute = createRoute({
 });
 
 /**
+ * @var The openAPI spec for the ticket Stribe call back route
+ */
+const ticketStribeCB = createRoute({
+  description:
+    "Used by stribe as a callback upon a succesful purchase, will change state of ticket to complete",
+  tags: ["Tickets"],
+  method: "get",
+  path: "/stribe-cb",
+  request: {
+    query: z.object({
+      key: z.string().uuid().openapi({
+        description:
+          "The used to authenticate from stribe and prevent users from updating their own tickets. Is associated with a ticket",
+      }),
+    }),
+  },
+  responses: {
+    200: {
+      description:
+        "The ticket associated with the given key was updated to a completed state",
+    },
+    404: {
+      description: "Could not find a ticket from the given key",
+    },
+  },
+});
+
+/**
  * @var The openAPI spec for the ticket delete route
  */
 const ticketDeleteRoute = createRoute({
@@ -186,5 +214,6 @@ export {
   ticketGetByIdRoute,
   ticketPostRoute,
   ticketPutRoute,
+  ticketStribeCB,
   ticketDeleteRoute,
 };
