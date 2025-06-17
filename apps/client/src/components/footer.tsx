@@ -1,7 +1,9 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 const Footer: React.FC = () => {
+  const theme = useTheme();
+  
   return (
     <Box 
       component="footer" 
@@ -9,9 +11,11 @@ const Footer: React.FC = () => {
         py: 3, 
         px: 2, 
         mt: 'auto',
-        backgroundColor: '#0F1524',
+        backgroundColor: theme.palette.mode === 'dark' ? 'grey.900' : '#0F1524',
         color: 'white',
-        boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.1)',
+        position: 'sticky',
+        bottom: 0
       }}
     >
       <Box sx={{ 
