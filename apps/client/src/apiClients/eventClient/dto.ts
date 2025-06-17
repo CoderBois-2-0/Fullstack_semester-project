@@ -45,4 +45,39 @@ interface IEvent extends TEventResponse {
  */
 type TEventCreate = Omit<IEvent, 'id' | 'creatorId'>;
 
-export { type IEventGETResponse, type IEventPostResponse, type IEvent, type TEventCreate };
+/**
+ * @description
+ * Parameters for paginated event queries
+ */
+interface IEventQueryParams {
+  page: number;
+  limit: number;
+}
+
+/**
+ * @description
+ * Paginated response structure for events
+ */
+interface IPaginatedEventResponse {
+  events: IEventGETResponse[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * @description
+ * Client-side paginated event response
+ */
+interface IPaginatedEvents {
+  data: IEvent[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export { type IEventGETResponse, type IEventPostResponse, type IEvent, type TEventCreate, type IEventQueryParams, type IPaginatedEventResponse, type IPaginatedEvents };

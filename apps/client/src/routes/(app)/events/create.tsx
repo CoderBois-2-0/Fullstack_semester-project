@@ -41,7 +41,7 @@ const CreateEventPage: React.FC = () => {
     e.preventDefault();
 
     const price = Number(eventData.price);
-    if (!price) {
+    if (isNaN(price) || price < 0) {
       return;
     }
 
