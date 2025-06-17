@@ -90,7 +90,11 @@ const eventPostRoute = createRoute({
         "application/json": {
           schema: eventInsertSchema
             .omit({ creatorId: true })
-            .extend({ startDate: z.coerce.date(), endDate: z.coerce.date() })
+            .extend({
+              startDate: z.coerce.date(),
+              endDate: z.coerce.date(),
+              price: z.coerce.number(),
+            })
             .strict()
             .openapi("Event Post request"),
         },

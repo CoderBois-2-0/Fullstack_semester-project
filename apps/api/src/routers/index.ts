@@ -2,6 +2,7 @@ import { env } from "hono/adapter";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
+import { KVNamespace } from "@cloudflare/workers-types";
 
 import authRouter from "./authRouter";
 import eventRouter from "./eventRouter";
@@ -18,14 +19,36 @@ interface IBindings {
    * @property The jwt secret
    */
   JWT_SECRET: string;
+
   /**
    * @property The origin to set for cors
    */
   CORS_ORIGIN: string;
+
   /**
-   * @property The database urlj
+   * @property The database url
    */
   DB_URL: string;
+
+  /**
+   * @property The stribe secret used to integrate with them
+   */
+  STRIBE_SECRET_KEY: string;
+
+  /**
+   * @property The base url of this app
+   */
+  BASE_URL: string;
+
+  /**
+   * @property The url of the client
+   */
+  CLIENT_URL: string;
+
+  /**
+   * @property The kv for ticket authentication keys, used to authenticate when returning from stribe
+   */
+  TICKET_KEYS: KVNamespace;
 }
 
 interface IHonoProperties<T> {
@@ -69,6 +92,8 @@ app
   .route("/tickets", ticketRouter)
   .route("/posts", postRouter)
   .route("/comments", commentRouter);
+
+console.log(app.routes);
 
 export default app;
 export { IHonoProperties };

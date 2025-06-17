@@ -13,6 +13,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import { type IEvent } from "@/apiClients/eventClient/dto";
 import { Link } from "@tanstack/react-router";
+import { useCreateTicket } from "@/hooks/ticketHook";
 
 interface EventCardProps {
   event: IEvent;
@@ -20,6 +21,8 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
+  const ticketMutation = useCreateTicket();
+
   // Format date from database
   const formatDate = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -41,7 +44,16 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
     // Prevent the event from bubbling up to the card
     e.stopPropagation();
 
-    alert("Tickets will be available soon!");
+    ticketMutation.mutate(
+      { eventId: event.id, quantity: 1 },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            window.open(data);
+          }
+        },
+      }
+    );
   };
 
   return (

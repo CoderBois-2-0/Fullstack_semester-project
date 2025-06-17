@@ -12,10 +12,10 @@ import {
 function queryData<
   TQueryFnData = unknown,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = never,
+  TPageParam = never
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
 ) {
   const query = useQuery({
     queryKey,
@@ -30,11 +30,11 @@ function queryData<
 
 function mutateData<TData = unknown, TVariables = void, TContext = unknown>(
   mutationFn: MutationFunction<TData, TVariables>,
-  onSuccess: (
+  onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext,
-  ) => Promise<unknown> | unknown,
+    context: TContext
+  ) => Promise<unknown> | unknown
 ) {
   const mutation = useMutation({
     mutationFn,

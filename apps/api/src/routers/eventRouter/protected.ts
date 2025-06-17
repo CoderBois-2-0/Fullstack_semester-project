@@ -4,6 +4,7 @@ import { IEventVariables } from "@/routers/eventRouter/index";
 import { eventDeleteRoute, eventPostRoute, eventPutRoute } from "./openAPI";
 import { jwtMiddleware, TJWTVariables } from "@/auth";
 import { IHonoProperties } from "..";
+import StribeHandler from "@/stribe";
 
 interface IProtectedEventVariables extends IEventVariables, TJWTVariables {}
 
@@ -22,13 +23,16 @@ eventProtectedRouter
 
     const eventHandler = c.get("eventHandler");
 
-    const newEvent = c.req.valid("json");
+    const { price, ...newEvent } = c.req.valid("json");
 
     const creatorId = user.id;
-    const event = await eventHandler.createEvent({
-      ...newEvent,
-      creatorId,
-    });
+    const event = await eventHandler.createEvent(
+      {
+        ...newEvent,
+        creatorId,
+      },
+      price
+    );
 
     return c.json({ event });
   })

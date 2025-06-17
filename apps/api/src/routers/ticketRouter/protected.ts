@@ -10,8 +10,11 @@ import {
 import { ITicketVariables } from "./index";
 import { jwtMiddleware, TJWTVariables } from "@/auth";
 import { IHonoProperties } from "..";
+import { UserHandler } from "@/db/handlers/userHandler";
 
-interface IProtectedTicketHVariables extends ITicketVariables, TJWTVariables {}
+interface IProtectedTicketHVariables extends ITicketVariables, TJWTVariables {
+  userHandler: UserHandler;
+}
 
 /**
  * @var The ticket router
@@ -22,9 +25,15 @@ const protectedRouter = new OpenAPIHono<
 
 protectedRouter.use(jwtMiddleware);
 
+protectedRouter.use(async (c, next) => {
+  c.set("userHandler", new UserHandler(c.env.DB_URL, c.env.STRIBE_SECRET_KEY));
+  await next();
+});
+
 protectedRouter
   .openapi(ticketGetRoute, async (c) => {
     const query = c.req.valid("query");
+    const userHandler = c.get("userHandler");
     const tickethandler = c.get("ticketHandler");
 
     const tickets = await tickethandler.getTickets(query);
@@ -44,18 +53,36 @@ protectedRouter
   })
   .openapi(ticketPostRoute, async (c) => {
     const user = c.get("jwtPayload");
+    if (user.role !== "GUEST") {
+      return c.json({ data: "Unauthorized, user role must be guest" }, 401);
+    }
+
+    const userHandler = c.get("userHandler");
     const ticketHandler = c.get("ticketHandler");
+
     const newTicket = c.req.valid("json");
 
-    const ticket = await ticketHandler.createTicket({
-      ...newTicket,
-      userId: user.id,
-    });
+    const customer = await userHandler.findUserCustomerByUserId(user.id);
+    if (!customer) {
+      return c.json({ data: "" }, 500);
+    }
+    const ticket = await ticketHandler.createTicket(user.id, newTicket);
     if (!ticket) {
       return c.json({ data: "Could not create ticket" }, 500);
     }
 
-    return c.json({ ticket });
+    const key = crypto.randomUUID();
+    await c.env.TICKET_KEYS.put(key, ticket.id);
+    const ticketSession = await ticketHandler.creatSession(
+      customer.stribeCustomerId,
+      ticket,
+      key
+    );
+
+    return c.json({
+      ticket,
+      ticketSession,
+    });
   })
   .openapi(ticketPutRoute, async (c) => {
     const ticketHandler = c.get("ticketHandler");
