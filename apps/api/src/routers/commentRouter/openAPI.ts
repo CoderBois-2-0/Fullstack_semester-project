@@ -2,8 +2,8 @@ import {
   commentInsertSchema,
   commentUpdateSchema,
 } from "@/db/handlers/commentHandler/dto";
-import { createRoute } from "@hono/zod-openapi";
-import { commentResponseSchema } from "./dto";
+import { createRoute, z } from "@hono/zod-openapi";
+import { commentQuerySchema, commentResponseSchema } from "./dto";
 
 /**
  * @description
@@ -14,6 +14,9 @@ const commentGetRoute = createRoute({
   tags: ["Comments"],
   method: "get",
   path: "/",
+  request: {
+    query: commentQuerySchema.openapi({ description: "The comment query" }),
+  },
   responses: {
     200: {
       description: "Retrieved all comments",
@@ -66,6 +69,9 @@ const commentPostRoute = createRoute({
         "application/json": {
           schema: commentInsertSchema
             .omit({ userId: true })
+            .extend({
+              createdAt: z.coerce.date(),
+            })
             .strict()
             .openapi("Comment post request"),
         },

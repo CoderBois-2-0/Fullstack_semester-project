@@ -1,4 +1,4 @@
-import { eq, getTableColumns } from "drizzle-orm";
+import { asc, desc, eq, getTableColumns } from "drizzle-orm";
 
 import { getDBClient } from "@/db/index";
 import { postTable, userTable } from "@/db/schema";
@@ -37,6 +37,7 @@ class PostHandler {
         },
       })
       .from(this.#table)
+      .orderBy(desc(this.#table.createdAt))
       .innerJoin(userTable, eq(this.#table.userId, userTable.id))
       .$dynamic();
 

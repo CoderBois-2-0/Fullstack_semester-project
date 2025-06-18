@@ -12,7 +12,8 @@ import { IHonoProperties } from "..";
 interface IProtectedCommentVariables extends ICommentVariables, TJWTVariables {}
 
 /**
- * @var The protected comment router
+ * @description
+ * The protected comment router
  */
 const commentRouter = new OpenAPIHono<
   IHonoProperties<IProtectedCommentVariables>
@@ -34,7 +35,7 @@ commentRouter
       return c.json({ data: "Could not create ticket" }, 500);
     }
 
-    return c.json({ comment });
+    return c.json(comment);
   })
   .openapi(commentPutRoute, async (c) => {
     const commentHandler = c.get("commentHandler");
@@ -43,7 +44,7 @@ commentRouter
 
     const comment = await commentHandler.updateComment(
       commentId,
-      updatedComment,
+      updatedComment
     );
     if (!comment) {
       return c.json({ data: "Could not update ticket" }, 500);

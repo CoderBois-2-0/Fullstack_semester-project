@@ -22,11 +22,7 @@ function connect(dbUrl: string) {
  * @returns The drizzle db client
  */
 function getDBClient(dbUrl: string) {
-  if (!db) {
-    db = connect(dbUrl);
-  }
-
-  return db;
+  return connect(dbUrl);
 }
 
 export { getDBClient };

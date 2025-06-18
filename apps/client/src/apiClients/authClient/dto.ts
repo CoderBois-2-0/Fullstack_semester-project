@@ -1,8 +1,8 @@
-interface IUserResponse {
+interface IAPIUser {
   id: string;
   role: "GUEST" | "ORGANISER" | "ADMIN";
   username: string;
   email: string;
 }
 
-export { type IUserResponse };
+export { type IAPIUser };

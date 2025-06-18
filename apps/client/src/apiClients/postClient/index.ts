@@ -1,5 +1,5 @@
 import APIClient from "@/apiClients/index";
-import type { IPostResponse, IPost, IPostRequest } from "./dto";
+import type { IPostGetResponse, IPost, IPostRequest } from "./dto";
 
 class PostClient {
   #baseClient: APIClient;
@@ -14,10 +14,14 @@ class PostClient {
    * @param eventId - The event associated with the posts
    * @returns
    */
-  async getPosts(eventId: string): Promise<IPost[]> {
+  async getPosts(
+    eventId: string,
+    page: number,
+    limit: number
+  ): Promise<IPost[]> {
     const postResponses = await this.#baseClient.get<{
-      posts: IPostResponse[];
-    }>(undefined, `event-id=${eventId}`);
+      posts: IPostGetResponse[];
+    }>(undefined, `event-id=${eventId}&page=${page}&limit=${limit}`);
     if (!postResponses) {
       throw Error("");
     }
@@ -28,7 +32,7 @@ class PostClient {
   }
 
   async findPostById(postId: string): Promise<IPost | null> {
-    const postResponse = await this.#baseClient.get<IPostResponse>(
+    const postResponse = await this.#baseClient.get<IPostGetResponse>(
       `/${postId}`
     );
     if (!postResponse) {
@@ -39,7 +43,7 @@ class PostClient {
   }
 
   async createPost(newPost: IPostRequest): Promise<IPost | null> {
-    const postResponse = await this.#baseClient.post<IPostResponse>(newPost);
+    const postResponse = await this.#baseClient.post<IPostGetResponse>(newPost);
     if (!postResponse) {
       throw Error();
     }
@@ -48,7 +52,7 @@ class PostClient {
   }
 
   async updatePost(postId: string, updatedPost: IPost): Promise<IPost | null> {
-    const postResponse = await this.#baseClient.put<IPostResponse>(
+    const postResponse = await this.#baseClient.put<IPostGetResponse>(
       updatedPost,
       `/${postId}`
     );
@@ -60,7 +64,7 @@ class PostClient {
   }
 
   async deletePost(postId: string): Promise<IPost | null> {
-    const postResponse = await this.#baseClient.delete<IPostResponse>(
+    const postResponse = await this.#baseClient.delete<IPostGetResponse>(
       `/${postId}`
     );
     if (!postResponse) {
@@ -74,10 +78,13 @@ class PostClient {
    * @description
    * Transform a post api response into a client post
    */
-  #transform(postResponse: IPostResponse): IPost {
-    const createdAt = new Date(postResponse.createdAt);
+  #transform(postResponse: IPostGetResponse): IPost {
+    const createdAt = new Date(postResponse.post.createdAt);
 
-    return { ...postResponse, createdAt };
+    return {
+      post: { ...postResponse.post, createdAt },
+      user: postResponse.user,
+    };
   }
 }
 

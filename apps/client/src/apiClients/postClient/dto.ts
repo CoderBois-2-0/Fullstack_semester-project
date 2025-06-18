@@ -1,24 +1,44 @@
+import type { IAPIUser } from "../authClient/dto";
+
 /**
  * @description
- * The post response representation from the api
+ * The base api representation of a post
  */
-interface IPostResponse {
+interface IAPIPost {
   id: string;
   title: string;
   content: string;
   createdAt: string;
-  eventId: string;
   userId: string;
+  eventId: string;
 }
 
 /**
  * @description
- * The client representation of a post
+ * The base client representation of a post
  */
-interface IPost extends Omit<IPostResponse, "createdAt"> {
+interface IClientPost extends Omit<IAPIPost, "createdAt"> {
   createdAt: Date;
 }
 
-interface IPostRequest extends Omit<IPostResponse, "id" | "userId"> {}
+/**
+ * @description
+ * The client data container of a post
+ */
+interface IPost {
+  post: IClientPost;
+  user: Pick<IAPIUser, "username">;
+}
 
-export type { IPostResponse, IPost, IPostRequest };
+/**
+ * @description
+ * The post response representation from the api
+ */
+interface IPostGetResponse {
+  post: IAPIPost;
+  user: Pick<IAPIUser, "username">;
+}
+
+interface IPostRequest extends Omit<IAPIPost, "id" | "userId"> {}
+
+export type { IAPIPost, IClientPost, IPostGetResponse, IPost, IPostRequest };

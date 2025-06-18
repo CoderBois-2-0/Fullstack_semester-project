@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 
 import { getDBClient } from "@/db/index";
-import { commentTable } from "@/db/schema";
+import { commentTable, postTable, userTable } from "@/db/schema";
 import { TCommentInsert, TCommentUpdate } from "./dto";
+import { TCommentQuery } from "@/routers/commentRouter/dto";
 
 /**
  * @description
@@ -26,8 +27,24 @@ class CommentHandler {
    * Retrieves all comments
    * @returns A list of all comments
    */
-  async getComments() {
-    return this.#client.query.commentTable.findMany();
+  async getComments(query: TCommentQuery) {
+    let queryBuider = this.#client
+      .select({
+        comment: getTableColumns(this.#table),
+        user: {
+          username: userTable.username,
+        },
+      })
+      .from(this.#table)
+      .innerJoin(userTable, eq(this.#table.userId, userTable.id))
+      .$dynamic();
+
+    const postId = query["post-id"];
+    if (postId) {
+      queryBuider = queryBuider.where(eq(this.#table.postId, postId));
+    }
+
+    return queryBuider.execute();
   }
 
   /**
