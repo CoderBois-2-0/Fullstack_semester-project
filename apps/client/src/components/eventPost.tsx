@@ -28,7 +28,6 @@ import type { IClientPost } from "@/apiClients/postClient/dto";
 import { useComments, useCreateComment } from "@/hooks/commentHook";
 import QueryRenderer from "./queryRenderer";
 import type {
-  IClientComment,
   IComment,
   ICommentPostRequest,
 } from "@/apiClients/commentClient/dto";
@@ -220,13 +219,6 @@ const CommentsContainer = (props: {
     </Collapse>
   );
 };
-
-interface Comment {
-  id: string;
-  content: string;
-  author: string;
-  createdAt: Date;
-}
 
 interface EventPostProps {
   post: IClientPost;
