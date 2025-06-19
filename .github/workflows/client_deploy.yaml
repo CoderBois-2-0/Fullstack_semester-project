@@ -12,7 +12,7 @@ deploy:
   name: Client deploy
   env:
     PROJECT: client
-    VITE_API_URL: https://queue-up-api.sid-doro-hd.workers.dev
+    VITE_API_URL: https://queue-up-api-cors.sid-doro-hd.workers.dev
   steps:
     - uses: actions/checkout@v4
 
