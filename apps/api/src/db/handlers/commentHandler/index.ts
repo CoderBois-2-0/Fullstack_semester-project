@@ -1,40 +1,9 @@
-import { eq } from "drizzle-orm";
-import {
-  createInsertSchema,
-  createSelectSchema,
-  createUpdateSchema,
-} from "drizzle-zod";
-import { z } from "zod";
+import { eq, getTableColumns } from "drizzle-orm";
 
 import { getDBClient } from "@/db/index";
-import { commentTable } from "@/db/schema";
-
-const commentSelectSchema = createSelectSchema(commentTable);
-type TComment = z.infer<typeof commentSelectSchema>;
-
-/**
- * @description
- * The zod schema for inserting comments
- */
-const commentInsertSchema = createInsertSchema(commentTable).omit({ id: true });
-/**
- * @description
- * The zod type of a comment that is to be inserted
- */
-type TCommentInsert = z.infer<typeof commentInsertSchema>;
-
-/**
- * @description
- * The zod schema for updating a comment
- */
-const commentUpdateSchema = createUpdateSchema(commentTable).omit({
-  id: true,
-});
-/**
- * @description
- * The zod type of a comment that is to be updated
- */
-type TCommentUpdate = z.infer<typeof commentUpdateSchema>;
+import { commentTable, postTable, userTable } from "@/db/schema";
+import { TCommentInsert, TCommentUpdate } from "./dto";
+import { TCommentQuery } from "@/routers/commentRouter/dto";
 
 /**
  * @description
@@ -58,8 +27,24 @@ class CommentHandler {
    * Retrieves all comments
    * @returns A list of all comments
    */
-  async getComments() {
-    return this.#client.query.commentTable.findMany();
+  async getComments(query: TCommentQuery) {
+    let queryBuider = this.#client
+      .select({
+        comment: getTableColumns(this.#table),
+        user: {
+          username: userTable.username,
+        },
+      })
+      .from(this.#table)
+      .innerJoin(userTable, eq(this.#table.userId, userTable.id))
+      .$dynamic();
+
+    const postId = query["post-id"];
+    if (postId) {
+      queryBuider = queryBuider.where(eq(this.#table.postId, postId));
+    }
+
+    return queryBuider.execute();
   }
 
   /**
@@ -126,9 +111,4 @@ class CommentHandler {
   }
 }
 
-export {
-  CommentHandler,
-  commentSelectSchema,
-  commentInsertSchema,
-  commentUpdateSchema,
-};
+export { CommentHandler };

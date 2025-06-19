@@ -1,25 +1,36 @@
 class APIClient {
   #baseURL: string;
   #basePath: string;
+  #url: string;
 
   constructor(basePath: string) {
     this.#baseURL = import.meta.env.VITE_API_URL;
     this.#basePath = basePath;
+    this.#url = `${this.#baseURL}/${this.#basePath}`;
+  }
+
+  async #apiCal(options: {
+    method: "get" | "post" | "put" | "delete";
+    path?: string;
+    query?: string;
+  }) {
+    const path = options.path ? `${this.#url}${options.path}` : this.#url;
+
+    return fetch(`${path}${options.query ? `?${options.query}` : ""}`, {
+      method: options.method,
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
   }
 
   async get<T>(extendedPath?: string, query?: string): Promise<T | null> {
-    const path = extendedPath ? this.#basePath + extendedPath : this.#basePath;
-
-    const response = await fetch(
-      `${this.#baseURL}/${path}${query ? `?${query}` : ""}`,
-      {
-        method: "get",
-        headers: {
-          Accept: "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const response = await this.#apiCal({
+      method: "get",
+      path: extendedPath,
+      query,
+    });
     if (response.status !== 200) {
       return null;
     }

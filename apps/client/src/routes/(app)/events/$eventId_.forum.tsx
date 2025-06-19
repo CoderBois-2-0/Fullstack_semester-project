@@ -27,51 +27,28 @@ export const Route = createFileRoute("/(app)/events/$eventId_/forum")({
   component: RouteComponent,
 });
 
-
-
 function PostsQuery(props: { posts: IPost[]; eventId: string }) {
   const handleLike = (postId: string) => {
     console.log("Liked:", postId);
     // TODO: Implement your like API call
   };
 
-  const handleComment = (comment: string) => {
-    console.log("Comment:", comment);
-    // TODO: Implement your comment API call
-  };
-
-  // TODO: You'll need to get user data for each post
-  // For now using placeholder data - replace with your user fetching logic
-  const getUserForPost = (userId: string) => {
-    return {
-      id: userId,
-      name: "User", // Replace with actual user name from your user API
-    };
-  };
-
-  // Sort posts by creation date - newest first
-  const sortedPosts = [...props.posts].sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
-
   return (
     <>
-      {sortedPosts.map((post) => (
+      {props.posts.map((post) => (
         <EventPost
-          key={post.id}
+          key={post.post.id}
           post={{
-            id: post.id,
-            title: post.title,
-            content: post.content,
-            createdAt: new Date(post.createdAt),
-            eventId: post.eventId,
-            userId: post.userId,
+            id: post.post.id,
+            title: post.post.title,
+            content: post.post.content,
+            createdAt: post.post.createdAt,
+            eventId: post.post.eventId,
+            userId: post.post.userId,
           }}
-          user={getUserForPost(post.userId)}
+          username={post.user.username}
           eventName="Event" // TODO: Pass actual event name if needed
           onLike={handleLike}
-          onComment={handleComment}
-          initialComments={[]} // TODO: Fetch comments for each post
         />
       ))}
     </>
@@ -80,7 +57,7 @@ function PostsQuery(props: { posts: IPost[]; eventId: string }) {
 
 function RouteComponent() {
   const { eventId } = Route.useParams();
-  const postQuery = usePosts(eventId);
+  const postQuery = usePosts(eventId, 1, 12);
   const postMutation = useCreatePost();
 
   const [postData, setPostData] = useState({
@@ -114,15 +91,15 @@ function RouteComponent() {
       }}
     >
       <Box width="50%" display="flex" flexDirection="column" gap={3}>
-        <Card 
-          sx={{ 
-            transition: 'box-shadow 0.3s ease',
-            '&:hover': {
+        <Card
+          sx={{
+            transition: "box-shadow 0.3s ease",
+            "&:hover": {
               boxShadow: (theme) => theme.shadows[4],
             },
           }}
         >
-          <CardHeader 
+          <CardHeader
             title={
               <Typography variant="subtitle1" fontWeight={600}>
                 Share something about this event
@@ -146,9 +123,9 @@ function RouteComponent() {
                 variant="outlined"
                 fullWidth
                 sx={{
-                  '& .MuiOutlinedInput-root': {
+                  "& .MuiOutlinedInput-root": {
                     borderRadius: 2,
-                    backgroundColor: 'background.paper',
+                    backgroundColor: "background.paper",
                   },
                 }}
               />
@@ -164,9 +141,9 @@ function RouteComponent() {
                 rows={3}
                 variant="outlined"
                 sx={{
-                  '& .MuiOutlinedInput-root': {
+                  "& .MuiOutlinedInput-root": {
                     borderRadius: 2,
-                    backgroundColor: 'background.paper',
+                    backgroundColor: "background.paper",
                   },
                 }}
               />
@@ -177,26 +154,31 @@ function RouteComponent() {
 
           <CardActions sx={{ justifyContent: "space-between", px: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {postData.title.length > 0 || postData.content.length > 0 
-                ? `${postData.title.length + postData.content.length} characters` 
-                : 'Start typing to create your post'}
+              {postData.title.length > 0 || postData.content.length > 0
+                ? `${
+                    postData.title.length + postData.content.length
+                  } characters`
+                : "Start typing to create your post"}
             </Typography>
-            
+
             <Button
               variant="contained"
               onClick={createPost}
-              disabled={postMutation.isPending || (!postData.title.trim() && !postData.content.trim())}
+              disabled={
+                postMutation.isPending ||
+                (!postData.title.trim() && !postData.content.trim())
+              }
               sx={{
-                textTransform: 'none',
+                textTransform: "none",
                 fontWeight: 600,
                 px: 3,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  transform: 'scale(1.05)',
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  transform: "scale(1.05)",
                 },
               }}
             >
-              {postMutation.isPending ? 'Creating...' : 'Create Post'}
+              {postMutation.isPending ? "Creating..." : "Create Post"}
             </Button>
           </CardActions>
         </Card>

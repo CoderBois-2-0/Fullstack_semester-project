@@ -1,41 +1,9 @@
-import { eq } from "drizzle-orm";
-import {
-  createSelectSchema,
-  createInsertSchema,
-  createUpdateSchema,
-} from "drizzle-zod";
-import { z } from "zod";
+import { asc, desc, eq, getTableColumns } from "drizzle-orm";
 
 import { getDBClient } from "@/db/index";
-import { postTable } from "@/db/schema";
-import { TPostQuery } from "@/routers/postRouter/openAPI";
-
-const postSelectSchema = createSelectSchema(postTable);
-type TPost = z.infer<typeof postSelectSchema>;
-
-/**
- * @description
- * The zod schema for inserting posts
- */
-const postInsertSchema = createInsertSchema(postTable).omit({ id: true });
-/**
- * @description
- * The zod type of a post that is to be inserted
- */
-type TPostInsert = z.infer<typeof postInsertSchema>;
-
-/**
- * @description
- * The zod schema for updating a psot
- */
-const postUpdateSchema = createUpdateSchema(postTable).omit({
-  id: true,
-});
-/**
- * @description
- * The zod type of a post that is to be updated
- */
-type TPostUpdate = z.infer<typeof postUpdateSchema>;
+import { postTable, userTable } from "@/db/schema";
+import { TPostQuery } from "@/routers/postRouter/dto";
+import { TPost, TPostInsert, TPostUpdate } from "./dto";
 
 /**
  * @description
@@ -58,15 +26,33 @@ class PostHandler {
    * @description
    * Retrieves all posts
    * @param query - A query object used for dynamic filtering of posts
-   * @returns A list of all events
+   * @returns A list of all posts
    */
-  async getPosts(query: TPostQuery) {
-    let queryBuilder = this.#client.select().from(this.#table).$dynamic();
+  async getPosts(query: TPostQuery): Promise<TPost[]> {
+    let queryBuilder = this.#client
+      .select({
+        post: getTableColumns(this.#table),
+        user: {
+          username: userTable.username,
+        },
+      })
+      .from(this.#table)
+      .orderBy(desc(this.#table.createdAt))
+      .innerJoin(userTable, eq(this.#table.userId, userTable.id))
+      .$dynamic();
 
     if (query["event-id"]) {
       queryBuilder = queryBuilder.where(
         eq(this.#table.eventId, query["event-id"])
       );
+    }
+    const limit = query.limit ? query.limit : 12;
+    if (query.limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+
+    if (query.page) {
+      queryBuilder = queryBuilder.offset((query.page - 1) * limit);
     }
 
     return queryBuilder.execute();
@@ -136,4 +122,4 @@ class PostHandler {
   }
 }
 
-export { PostHandler, postSelectSchema, postInsertSchema, postUpdateSchema };
+export { PostHandler };

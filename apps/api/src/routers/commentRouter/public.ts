@@ -9,10 +9,11 @@ import { ICommentHonoProperties } from "./index";
 const publicRouter = new OpenAPIHono<ICommentHonoProperties>()
   .openapi(commentGetRoute, async (c) => {
     const commentHandler = c.get("commentHandler");
+    const query = c.req.valid("query");
 
-    const comment = await commentHandler.getComments();
+    const comment = await commentHandler.getComments(query);
 
-    return c.json({ comment });
+    return c.json(comment);
   })
   .openapi(commentGetByIdRoute, async (c) => {
     const commentId = c.req.param("commentId");
@@ -23,7 +24,7 @@ const publicRouter = new OpenAPIHono<ICommentHonoProperties>()
       return c.json({ data: "Not found" }, 404);
     }
 
-    return c.json({ comment });
+    return c.json(comment);
   });
 
 export default publicRouter;

@@ -3,8 +3,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { IEventVariables } from "@/routers/eventRouter/index";
 import { eventDeleteRoute, eventPostRoute, eventPutRoute } from "./openAPI";
 import { jwtMiddleware, TJWTVariables } from "@/auth";
-import { IHonoProperties } from "..";
-import StribeHandler from "@/stribe";
+import { IHonoProperties } from "@/routers";
 
 interface IProtectedEventVariables extends IEventVariables, TJWTVariables {}
 

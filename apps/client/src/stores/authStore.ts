@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import AuthClient from "@/apiClients/authClient";
-import type { IUserResponse } from "@/apiClients/authClient/dto";
+import type { IAPIUser } from "@/apiClients/authClient/dto";
 
 interface IAuthStore {
   state: "init" | "signed-in" | "signed-out";
-  user: IUserResponse | null;
+  user: IAPIUser | null;
   isAuthenticated: () => Promise<boolean>;
-  setUser: (user: IUserResponse) => void;
+  setUser: (user: IAPIUser) => void;
   removeUser: () => void;
 }
 

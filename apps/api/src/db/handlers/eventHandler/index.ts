@@ -12,7 +12,7 @@ import {
   ticketTable,
   stribeProductEventTable,
   stribePriceEventTable,
-} from "../schema";
+} from "@/db/schema";
 import { TEventGetQuery } from "@/routers/eventRouter/openAPI";
 import StribeHandler from "@/stribe";
 

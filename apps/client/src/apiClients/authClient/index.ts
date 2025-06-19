@@ -1,5 +1,5 @@
 import APIClient from "../index";
-import type { IUserResponse } from "./dto";
+import type { IAPIUser } from "./dto";
 
 class AuthClient {
   #baseClient: APIClient;
@@ -9,7 +9,7 @@ class AuthClient {
   }
 
   async signUp(email: string, password: string, confirmPassword: string) {
-    return this.#baseClient.post<IUserResponse>(
+    return this.#baseClient.post<IAPIUser>(
       {
         role: "GUEST",
         username: "default",
@@ -22,7 +22,7 @@ class AuthClient {
   }
 
   async signIn(email: string, password: string) {
-    return this.#baseClient.post<IUserResponse>(
+    return this.#baseClient.post<IAPIUser>(
       {
         email,
         password,
@@ -32,7 +32,7 @@ class AuthClient {
   }
 
   async validate() {
-    return this.#baseClient.get<IUserResponse>("/validate");
+    return this.#baseClient.get<IAPIUser>("/validate");
   }
 
   async signOut() {
