@@ -167,7 +167,7 @@ const EventDetail = (props: { event: IEvent }) => {
                   textTransform: 'none'
                 }}
               >
-                {event.price ? 'Get Ticket' : 'Reserve Spot'}
+                Get Ticket
               </Button>
               
               <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
