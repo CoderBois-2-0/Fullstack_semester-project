@@ -14,8 +14,6 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
   subtitle = "Connect with fellow gamers at LAN parties, tournaments, and gaming meetups",
   imageUrl = "https://esports-news.co.uk/wp-content/uploads/2025/05/Enclave.png" 
 }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Box 
