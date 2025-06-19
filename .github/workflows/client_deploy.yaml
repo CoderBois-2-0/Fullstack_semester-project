@@ -10,6 +10,9 @@ on:
 deploy:
   runs-on: ubuntu-latest
   name: Client deploy
+  env:
+    PROJECT: client
+    VITE_API_URL: https://queue-up-api-cors.sid-doro-hd.workers.dev
   steps:
     - uses: actions/checkout@v4
 

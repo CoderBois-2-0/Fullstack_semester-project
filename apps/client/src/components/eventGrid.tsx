@@ -2,7 +2,6 @@ import React from "react";
 import { Box } from "@mui/material";
 import CardSkeleton from "./cardSkeleton";
 
-// The component only accepts what it needs to render the grid
 interface EventGridProps<T> {
   data: T[];
   isLoading?: boolean;
@@ -10,14 +9,12 @@ interface EventGridProps<T> {
   renderItem: (item: T, onClick?: (item: T) => void) => React.ReactNode;
 }
 
-// Generic event grid component that can be used with any data type
 const EventGrid = <T extends { id: string }>({
   data,
   isLoading = false,
   onItemClick,
   renderItem,
 }: EventGridProps<T>) => {
-  // Render loading skeletons when data is being fetched
   return (
     <Box
       sx={{
