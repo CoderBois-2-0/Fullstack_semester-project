@@ -6,8 +6,10 @@ import { useQueryClient } from "@tanstack/react-query";
 const QUERY_KEY = "events";
 const eventClient = new EventClient();
 
-function useEvents() {
-  const query = queryData([QUERY_KEY], () => eventClient.getEvents());
+function useEvents(page: number = 1, limit: number = 9) {
+  const query = queryData([QUERY_KEY, page, limit], () => 
+    eventClient.getEvents({ page, limit })
+  );
 
   return query;
 }

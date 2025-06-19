@@ -13,7 +13,7 @@ const eventPublicRouter = new OpenAPIHono<IEventHonoProperties>()
 
     const events = await eventHandler.getEvents(query);
 
-    return c.json({ events });
+    return c.json(events);
   })
   .openapi(eventGetByIdRoute, async (c) => {
     const eventHandler = c.get("eventHandler");

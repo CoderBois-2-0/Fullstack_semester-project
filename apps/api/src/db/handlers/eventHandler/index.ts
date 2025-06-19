@@ -74,37 +74,66 @@ class EventHandler {
    * @returns A list of all events
    */
   async getEvents(query: TEventGetQuery) {
-    let queryBuilder = this.#client
-      .select({
-        event: getTableColumns(this.#table),
-        ...(query["with-ticket-count"] === true
-          ? {
-              ticketCount: this.#client.$count(
-                ticketTable,
-                eq(this.#table.id, ticketTable.eventId)
-              ),
-            }
-          : {}),
-      })
-      .from(this.#table)
-      .$dynamic();
+  let queryBuilder = this.#client
+    .select({
+      event: getTableColumns(this.#table),
+      ...(query["with-ticket-count"] === true
+        ? {
+            ticketCount: this.#client.$count(
+              ticketTable,
+              eq(this.#table.id, ticketTable.eventId)
+            ),
+          }
+        : {}),
+    })
+    .from(this.#table)
+    .$dynamic();
 
-    if (query["user-id"] !== undefined) {
-      queryBuilder = queryBuilder.where(
-        eq(this.#table.creatorId, query["user-id"])
-      );
-    }
-
-    if (query.limit !== undefined) {
-      queryBuilder = queryBuilder.limit(query.limit);
-    }
-
-    if (query.page !== undefined) {
-      queryBuilder = queryBuilder.offset(query.page);
-    }
-
-    return queryBuilder.execute();
+  if (query["user-id"] !== undefined) {
+    queryBuilder = queryBuilder.where(
+      eq(this.#table.creatorId, query["user-id"])
+    );
   }
+
+  // Check if pagination is requested
+  const isPaginated = query.page !== undefined || query.limit !== undefined;
+
+  if (!isPaginated) {
+    // Non-paginated: return simple format
+    const events = await queryBuilder.execute();
+    return { events };
+  }
+
+  // PAGINATION: Get total count first (before applying limit/offset)
+  const totalEvents = await queryBuilder.execute();
+  const totalCount = totalEvents.length;
+
+  // Now apply pagination
+  if (query.limit !== undefined) {
+    queryBuilder = queryBuilder.limit(query.limit);
+  }
+
+  if (query.page !== undefined && query.limit !== undefined) {
+    const offset = (query.page - 1) * query.limit;
+    queryBuilder = queryBuilder.offset(offset);
+  }
+
+  const events = await queryBuilder.execute();
+
+  // Calculate pagination metadata
+  const limit = query.limit || totalCount;
+  const currentPage = query.page || 1;
+  const totalPages = Math.ceil(totalCount / limit);
+
+  return {
+    events,
+    totalCount,
+    totalPages,
+    currentPage,
+    hasNextPage: currentPage < totalPages,
+    hasPreviousPage: currentPage > 1,
+  };
+}
 
   /**
    * @description
