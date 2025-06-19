@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Box, Typography, Button, useTheme, useMediaQuery, Container } from '@mui/material';
+import { Box, Typography, Button, Container } from '@mui/material';
 import { PlayArrow as PlayIcon, Event as EventIcon } from '@mui/icons-material';
 
 interface HeroBannerProps {
