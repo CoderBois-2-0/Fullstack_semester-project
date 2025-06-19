@@ -14,6 +14,7 @@ import {
 import {
   CalendarToday as CalendarIcon,
   LocationOn as LocationIcon,
+  People as PeopleIcon,
   EuroSymbol as PriceIcon,
   Chat as ChatIcon,
   ConfirmationNumber as TicketIcon,
@@ -21,6 +22,7 @@ import {
 
 import { type IEvent } from "@/apiClients/eventClient/dto";
 import { Link } from "@tanstack/react-router";
+import { useCreateTicket } from "@/hooks/ticketHook";
 
 interface EventCardProps {
   event: IEvent;
@@ -28,6 +30,9 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
+  const ticketMutation = useCreateTicket();
+
+  // Format date from database
   const formatDate = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: "short",
@@ -46,9 +51,23 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
   };
 
   const handleTicketButtonClick = (e: React.MouseEvent) => {
+    // Prevent the event from bubbling up to the card
     e.stopPropagation();
-    alert("Tickets will be available soon!");
+
+    ticketMutation.mutate(
+      { eventId: event.id, quantity: 1 },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            window.open(data);
+          }
+        },
+      }
+    );
   };
+
+  // Mock attendee count - replace with real data
+  const attendeeCount = Math.floor(Math.random() * 200) + 50;
 
   return (
     <Card
@@ -59,9 +78,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
         borderRadius: 3,
         overflow: "hidden",
         position: "relative",
-        background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255,255,255,0.1)',
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         cursor: "pointer",
         '&:hover': {
@@ -121,6 +137,27 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
             boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
           }}
         />
+
+        {/* Attendee Count */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 12,
+            left: 12,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            bgcolor: 'rgba(0,0,0,0.7)',
+            borderRadius: 2,
+            px: 1.5,
+            py: 0.5
+          }}
+        >
+          <PeopleIcon sx={{ fontSize: 16, color: 'white' }} />
+          <Typography variant="caption" sx={{ color: 'white', fontWeight: 600 }}>
+            {attendeeCount}
+          </Typography>
+        </Box>
       </Box>
 
       {/* Event Content */}
@@ -181,6 +218,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
           size="small"
           startIcon={<TicketIcon />}
           onClick={handleTicketButtonClick}
+          disabled={ticketMutation.isPending}
           sx={{
             flex: 1,
             borderRadius: 2,
@@ -193,7 +231,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
             }
           }}
         >
-          Get Tickets
+          {ticketMutation.isPending ? 'Loading...' : 'Get Tickets'}
         </Button>
 
         <Link

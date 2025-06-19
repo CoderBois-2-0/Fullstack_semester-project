@@ -10,7 +10,6 @@ import {
   Chip
 } from "@mui/material";
 import {
-  ArrowBack as ArrowBackIcon,
   Event as EventIcon,
   LocationOn as LocationIcon,
   AccessTime as TimeIcon,
@@ -188,22 +187,6 @@ const EventPage = () => {
 
   return (
     <Box sx={{ minHeight: "100vh" }}>
-      <Container maxWidth="lg" sx={{ pt: 3 }}>
-        <Link to="/events" style={{ textDecoration: 'none' }}>
-          <Button
-            startIcon={<ArrowBackIcon />}
-            variant="outlined"
-            sx={{ 
-              mb: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-              '&:hover': { transform: 'translateX(-4px)' }
-            }}
-          >
-            Back to Events
-          </Button>
-        </Link>
-      </Container>
 
       {eventQuery.isLoading ? (
         <Container maxWidth="lg" sx={{ py: 6 }}>
