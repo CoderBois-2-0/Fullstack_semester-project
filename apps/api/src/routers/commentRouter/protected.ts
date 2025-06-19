@@ -6,7 +6,7 @@ import {
   commentDeleteRoute,
 } from "./openAPI";
 import { ICommentVariables } from ".";
-import { jwtMiddleware, TJWTVariables } from "@/auth";
+import { jwtMiddleware, rateLimiterHandler, TJWTVariables } from "@/auth";
 import { IHonoProperties } from "..";
 
 interface IProtectedCommentVariables extends ICommentVariables, TJWTVariables {}
@@ -18,7 +18,7 @@ const commentRouter = new OpenAPIHono<
   IHonoProperties<IProtectedCommentVariables>
 >();
 
-commentRouter.use(jwtMiddleware);
+commentRouter.use(jwtMiddleware).use(rateLimiterHandler);
 
 commentRouter
   .openapi(commentPostRoute, async (c) => {
@@ -43,7 +43,7 @@ commentRouter
 
     const comment = await commentHandler.updateComment(
       commentId,
-      updatedComment,
+      updatedComment
     );
     if (!comment) {
       return c.json({ data: "Could not update ticket" }, 500);

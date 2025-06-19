@@ -7,7 +7,7 @@ import {
   postPostRoute,
   postPutRoute,
 } from "./openAPI";
-import { jwtMiddleware, TJWTVariables } from "@/auth";
+import { jwtMiddleware, rateLimiterHandler, TJWTVariables } from "@/auth";
 import { IHonoProperties } from "@/routers/index";
 
 interface IProtectedPostVariables extends IPostVariables, TJWTVariables {}
@@ -19,7 +19,7 @@ const protectedRouter = new OpenAPIHono<
   IHonoProperties<IProtectedPostVariables>
 >();
 
-protectedRouter.use(jwtMiddleware);
+protectedRouter.use(jwtMiddleware).use(rateLimiterHandler);
 
 protectedRouter
   .openapi(postPostRoute, async (c) => {

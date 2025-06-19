@@ -14,6 +14,10 @@
     {
       "binding": "TICKET_KEYS",
       "id": "61625152c16c41f1bb33e9b9a8de42da"
+    },
+    {
+      "binding": "RATE_LIMITER",
+      "id": "771b29572d6b4443acb5611e2ee5b99e"
     }
   ]
   // "r2_buckets": [

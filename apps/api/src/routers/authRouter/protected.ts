@@ -1,6 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { AUTH_COOKIE_NAME, jwtMiddleware, TJWTVariables } from "@/auth";
+import {
+  AUTH_COOKIE_NAME,
+  jwtMiddleware,
+  rateLimiterHandler,
+  TJWTVariables,
+} from "@/auth";
 import { IAuthHonoProperties } from "./index";
 import { signOutRoute, validateRoute } from "./openAPI";
 import { IHonoProperties } from "..";
@@ -15,7 +20,7 @@ const protectedRouter = new OpenAPIHono<
   IHonoProperties<IProtectedAuthVariables>
 >();
 
-protectedRouter.use(jwtMiddleware);
+protectedRouter.use(jwtMiddleware).use(rateLimiterHandler);
 
 protectedRouter
   .openapi(validateRoute, (c) => {

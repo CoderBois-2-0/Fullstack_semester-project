@@ -1,7 +1,10 @@
-import { env } from "hono/adapter";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
+
 import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
+import { csrf } from "hono/csrf";
+
 import { KVNamespace } from "@cloudflare/workers-types";
 
 import authRouter from "./authRouter";
@@ -49,6 +52,11 @@ interface IBindings {
    * @property The kv for ticket authentication keys, used to authenticate when returning from stribe
    */
   TICKET_KEYS: KVNamespace;
+
+  /**
+   * @property The kv for the rate limiter store
+   */
+  RATE_LIMITER: KVNamespace;
 }
 
 interface IHonoProperties<T> {
@@ -61,15 +69,17 @@ interface IHonoProperties<T> {
  */
 const app = new OpenAPIHono<{ Bindings: IBindings }>();
 
-app.use(async (c, next) => {
-  const e = env<{ CORS_ORIGIN: string }>(c);
-  const corsHandler = cors({
-    origin: e.CORS_ORIGIN,
-    credentials: true,
-  });
+app
+  .use(async (c, next) => {
+    const corsHandler = cors({
+      origin: c.env.CORS_ORIGIN,
+      credentials: true,
+    });
 
-  return corsHandler(c, next);
-});
+    return corsHandler(c, next);
+  })
+  .use(secureHeaders())
+  .use(csrf());
 
 app
   .doc("/doc", {
@@ -92,8 +102,6 @@ app
   .route("/tickets", ticketRouter)
   .route("/posts", postRouter)
   .route("/comments", commentRouter);
-
-console.log(app.routes);
 
 export default app;
 export { IHonoProperties };

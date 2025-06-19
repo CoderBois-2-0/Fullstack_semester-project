@@ -8,7 +8,7 @@ import {
   ticketDeleteRoute,
 } from "./openAPI";
 import { ITicketVariables } from "./index";
-import { jwtMiddleware, TJWTVariables } from "@/auth";
+import { jwtMiddleware, rateLimiterHandler, TJWTVariables } from "@/auth";
 import { IHonoProperties } from "..";
 import { UserHandler } from "@/db/handlers/userHandler";
 
@@ -23,7 +23,7 @@ const protectedRouter = new OpenAPIHono<
   IHonoProperties<IProtectedTicketHVariables>
 >();
 
-protectedRouter.use(jwtMiddleware);
+protectedRouter.use(jwtMiddleware).use(rateLimiterHandler);
 
 protectedRouter.use(async (c, next) => {
   c.set("userHandler", new UserHandler(c.env.DB_URL, c.env.STRIBE_SECRET_KEY));

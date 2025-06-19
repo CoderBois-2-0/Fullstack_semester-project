@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@hono-rate-limiter/cloudflare':
+        specifier: ^0.2.2
+        version: 0.2.2(@cloudflare/workers-types@4.20250614.0)(hono@4.7.9)
       '@hono/node-server':
         specifier: ^1.14.2
         version: 1.14.2(hono@4.7.9)
@@ -37,6 +40,9 @@ importers:
       hono:
         specifier: ^4.7.8
         version: 4.7.9
+      hono-rate-limiter:
+        specifier: ^0.4.2
+        version: 0.4.2(hono@4.7.9)
       pg:
         specifier: ^8.15.6
         version: 8.15.6
@@ -748,6 +754,12 @@ packages:
 
   '@fontsource/press-start-2p@5.2.5':
     resolution: {integrity: sha512-MmGLqhkv0kuoyeGgGkquEMRxJP6auc6918bKd8uTWP2beXMWLZZwCfXCqmskFLf0XYbtbzxuRXLjTnQBeTwsMQ==}
+
+  '@hono-rate-limiter/cloudflare@0.2.2':
+    resolution: {integrity: sha512-wMnqeV+cb5Wov2npLIMFtCVm3tiNMtqw9LhPWSzSMwHOzh2qbhI3mCS6s962fxcJ6UUNJhRqDbVMEsB/NinCIQ==}
+    peerDependencies:
+      '@cloudflare/workers-types': ^4.20240529.0
+      hono: ^4.4.8
 
   '@hono/node-server@1.14.2':
     resolution: {integrity: sha512-GHjpOeHYbr9d1vkID2sNUYkl5IxumyhDrUJB7wBp7jvqYwPFt+oNKsAPBRcdSbV7kIrXhouLE199ks1QcK4r7A==}
@@ -1821,6 +1833,11 @@ packages:
 
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
+  hono-rate-limiter@0.4.2:
+    resolution: {integrity: sha512-AAtFqgADyrmbDijcRTT/HJfwqfvhalya2Zo+MgfdrMPas3zSMD8SU03cv+ZsYwRU1swv7zgVt0shwN059yzhjw==}
+    peerDependencies:
+      hono: ^4.1.1
 
   hono@4.7.9:
     resolution: {integrity: sha512-/EsCoR5h7N4yu01TDu9GMCCJa6ZLk5ZJIWFFGNawAXmd1Tp53+Wir4xm0D2X19bbykWUlzQG0+BvPAji6p9E8Q==}
@@ -3087,6 +3104,11 @@ snapshots:
 
   '@fontsource/press-start-2p@5.2.5': {}
 
+  '@hono-rate-limiter/cloudflare@0.2.2(@cloudflare/workers-types@4.20250614.0)(hono@4.7.9)':
+    dependencies:
+      '@cloudflare/workers-types': 4.20250614.0
+      hono: 4.7.9
+
   '@hono/node-server@1.14.2(hono@4.7.9)':
     dependencies:
       hono: 4.7.9
@@ -4028,6 +4050,10 @@ snapshots:
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
+
+  hono-rate-limiter@0.4.2(hono@4.7.9):
+    dependencies:
+      hono: 4.7.9
 
   hono@4.7.9: {}
 

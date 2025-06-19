@@ -2,6 +2,9 @@ import { Context } from "hono";
 import { jwt, sign, JwtVariables } from "hono/jwt";
 import { setCookie } from "hono/cookie";
 
+import { rateLimiter } from "hono-rate-limiter";
+import { WorkersKVStore } from "@hono-rate-limiter/cloudflare";
+
 import { TUser, TSafeUser } from "./db/handlers/userHandler";
 import { createMiddleware } from "hono/factory";
 
@@ -47,4 +50,27 @@ const jwtMiddleware = createMiddleware((c, next) => {
 });
 type TJWTVariables = JwtVariables<Omit<TUser, "password">>;
 
-export { AUTH_COOKIE_NAME, setJWTCookie, jwtMiddleware, TJWTVariables };
+const rateLimiterHandler = createMiddleware((c, next) => {
+  const rateLimiterHandler = rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+    keyGenerator: (c) => {
+      const user = c.get("jwtPayload");
+      console.log(user);
+
+      return user && user.id ? `${user.id}:${c.req.url}` : c.req.url;
+    },
+    store: new WorkersKVStore({ namespace: c.env.RATE_LIMITER }),
+  });
+
+  return rateLimiterHandler(c, next);
+});
+
+export {
+  AUTH_COOKIE_NAME,
+  setJWTCookie,
+  jwtMiddleware,
+  TJWTVariables,
+  rateLimiterHandler,
+};
