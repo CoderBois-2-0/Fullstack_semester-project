@@ -62,9 +62,9 @@ interface IHonoProperties<T> {
 const app = new OpenAPIHono<{ Bindings: IBindings }>();
 
 app.use(async (c, next) => {
-  const e = env<{ CORS_ORIGIN: string }>(c);
+  console.log("Cors hit", c.env.CORS_ORIGIN);
   const corsHandler = cors({
-    origin: e.CORS_ORIGIN,
+    origin: c.env.CORS_ORIGIN,
     credentials: true,
   });
 
