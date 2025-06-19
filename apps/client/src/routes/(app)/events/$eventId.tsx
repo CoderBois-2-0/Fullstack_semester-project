@@ -1,6 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Box, Container, Typography, Button, Paper } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Button, 
+  Paper, 
+  Grid,
+  Avatar,
+  Chip
+} from "@mui/material";
+import {
+  ArrowBack as ArrowBackIcon,
+  Event as EventIcon,
+  LocationOn as LocationIcon,
+  AccessTime as TimeIcon,
+  ConfirmationNumber as TicketIcon,
+  Chat as ChatIcon
+} from "@mui/icons-material";
 
 import { useEvent } from "@/hooks/eventHook";
 import type { IEvent } from "@/apiClients/eventClient/dto";
@@ -9,105 +25,195 @@ import QueryRenderer from "@/components/queryRenderer";
 
 const EventDetail = (props: { event: IEvent }) => {
   const event = props.event;
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  };
+
   return (
     <>
+      {/* Enhanced Hero */}
       <Box
         sx={{
-          height: "300px",
-          position: "relative",
-          background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(default-event-image.png)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          height: { xs: '300px', md: '400px' },
+          position: 'relative',
+          background: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url(default-event-image.png)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          display: 'flex',
+          alignItems: 'center'
         }}
       >
-        <Typography
-          variant="h3"
-          component="h1"
-          sx={{ color: "white", fontWeight: "bold", textAlign: "center" }}
-        >
-          {event.name}
-        </Typography>
+        <Container maxWidth="lg">
+          <Chip
+            icon={<EventIcon />}
+            label="Gaming Event"
+            color="primary"
+            sx={{ mb: 2, bgcolor: 'rgba(25, 118, 210, 0.2)', color: 'white' }}
+          />
+          <Typography
+            variant="h2"
+            component="h1"
+            sx={{ 
+              color: 'white', 
+              fontWeight: 700,
+              fontSize: { xs: '2rem', md: '3rem' },
+              textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+              maxWidth: 800
+            }}
+          >
+            {event.name}
+          </Typography>
+        </Container>
       </Box>
 
       {/* Main Content */}
-      <Container maxWidth="md" sx={{ my: 5 }}>
-        {/* Description */}
-        <Paper sx={{ p: 4, mb: 4 }}>
-          <Typography variant="h5" sx={{ mb: 3 }}>
-            About this event
-          </Typography>
-        </Paper>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Grid container spacing={4}>
+          {/* Event Details */}
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Paper sx={{ p: 4, mb: 4 }}>
+              <Typography variant="h5" fontWeight={600} gutterBottom>
+                Event Details
+              </Typography>
+              
+              {/* Info Grid */}
+              <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar sx={{ bgcolor: 'primary.main' }}>
+                      <TimeIcon />
+                    </Avatar>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">Date & Time</Typography>
+                      <Typography variant="body1" fontWeight={500}>
+                        {formatDate(event.startDate)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar sx={{ bgcolor: 'secondary.main' }}>
+                      <LocationIcon />
+                    </Avatar>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">Location</Typography>
+                      <Typography variant="body1" fontWeight={500}>
+                        {event.location}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
 
-        {/* Price and Buy Ticket */}
-        <Paper
-          sx={{
-            p: 4,
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: "space-between",
-            alignItems: { xs: "flex-start", sm: "center" },
-          }}
-        >
-          <Box sx={{ mb: { xs: 2, sm: 0 } }}>
-            <Typography variant="subtitle1" color="text.secondary">
-              Price
-            </Typography>
-            <Typography variant="h5" fontWeight="bold">
-              {event.price || "Free"}
-            </Typography>
-          </Box>
+              <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                About this event
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                Join us for an exciting gaming experience! Connect with fellow gamers, compete in tournaments, 
+                and enjoy an unforgettable event filled with gaming, networking, and prizes.
+              </Typography>
 
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ px: 4 }}
-          >
-            Buy Ticket
-          </Button>
-        </Paper>
+              <Box sx={{ mt: 3 }}>
+                <Link to="/events/$eventId/forum" params={{ eventId: event.id }} style={{ textDecoration: 'none' }}>
+                  <Button
+                    startIcon={<ChatIcon />}
+                    variant="outlined"
+                    sx={{ textTransform: 'none', fontWeight: 600 }}
+                  >
+                    Join Discussion
+                  </Button>
+                </Link>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Ticket Card */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Paper 
+              sx={{ 
+                p: 4, 
+                textAlign: 'center',
+                position: 'sticky',
+                top: 20,
+                transition: 'transform 0.2s ease',
+                '&:hover': { transform: 'translateY(-2px)' }
+              }}
+            >
+              <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56, mx: 'auto', mb: 2 }}>
+                <TicketIcon />
+              </Avatar>
+              
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                Event Ticket
+              </Typography>
+              
+              <Typography variant="h3" fontWeight="bold" color="primary.main" sx={{ mb: 3 }}>
+                {event.price ? `${event.price} DKK` : 'Free'}
+              </Typography>
+
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                startIcon={<TicketIcon />}
+                sx={{ 
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  textTransform: 'none'
+                }}
+              >
+                {event.price ? 'Get Ticket' : 'Reserve Spot'}
+              </Button>
+              
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                Secure booking • Instant confirmation
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
 };
 
-// Main component that displays event details
 const EventPage = () => {
-  // Extract event ID from URL
   const { eventId } = Route.useParams();
   const eventQuery = useEvent(eventId);
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      pt={2}
-      px={35}
-      gap={2}
-    >
+    <Box sx={{ minHeight: "100vh" }}>
+      <Container maxWidth="lg" sx={{ pt: 3 }}>
+        <Link to="/events" style={{ textDecoration: 'none' }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            variant="outlined"
+            sx={{ 
+              mb: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+              '&:hover': { transform: 'translateX(-4px)' }
+            }}
+          >
+            Back to Events
+          </Button>
+        </Link>
+      </Container>
+
       {eventQuery.isLoading ? (
-        <CardSkeleton />
+        <Container maxWidth="lg" sx={{ py: 6 }}>
+          <CardSkeleton />
+        </Container>
       ) : (
         <QueryRenderer
           query={eventQuery}
           renderFn={(event) => <EventDetail event={event} />}
         />
-      )}
-
-      {!eventQuery.isLoading && (
-        <Link to="/events">
-          <Button
-            startIcon={<ArrowBackIcon />}
-            variant="outlined"
-            sx={{ mb: 4 }}
-          >
-            Back to Events
-          </Button>
-        </Link>
       )}
     </Box>
   );
@@ -115,7 +221,6 @@ const EventPage = () => {
 
 export default EventPage;
 
-// Route definition for TanStack Router
 export const Route = createFileRoute("/(app)/events/$eventId")({
   component: EventPage,
 });
