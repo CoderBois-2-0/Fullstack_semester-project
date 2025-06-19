@@ -12,15 +12,30 @@ import {
   useMediaQuery,
   Menu,
   MenuItem,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import {
+  Menu as MenuIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  Event as EventIcon,
+  Add as AddIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  Build as BuildIcon,
+} from "@mui/icons-material";
 import useAuthStore from "@/stores/authStore";
-import { ThemeToggleButton } from "./themeToggleButton"; // 👈 Import the toggle button
+import { ThemeToggleButton } from "./themeToggleButton";
 
 const Navbar: React.FC = () => {
   const authStore = useAuthStore();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   useEffect(() => {
     (async function () {
@@ -30,7 +45,7 @@ const Navbar: React.FC = () => {
   }, [authStore.user]);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -42,61 +57,166 @@ const Navbar: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const toggleMobileDrawer = () => {
+    setMobileDrawerOpen(!mobileDrawerOpen);
+  };
+
   const signOut = () => {
     authStore.removeUser();
+    handleDropdownClose();
   };
+
+  const MobileDrawer = () => (
+    <Drawer
+      anchor="right"
+      open={mobileDrawerOpen}
+      onClose={toggleMobileDrawer}
+      sx={{
+        '& .MuiDrawer-paper': {
+          width: 280,
+          bgcolor: 'background.paper',
+        }
+      }}
+    >
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          Queue Up
+        </Typography>
+        <Divider />
+      </Box>
+
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/events" onClick={toggleMobileDrawer}>
+            <ListItemIcon>
+              <EventIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Events" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/events/create" onClick={toggleMobileDrawer}>
+            <ListItemIcon>
+              <AddIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText primary="Create Event" />
+          </ListItemButton>
+        </ListItem>
+
+        <Divider sx={{ my: 1 }} />
+
+        {isAuthenticated ? (
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => { signOut(); toggleMobileDrawer(); }}>
+              <ListItemIcon>
+                <LogoutIcon color="error" />
+              </ListItemIcon>
+              <ListItemText primary="Sign Out" />
+            </ListItemButton>
+          </ListItem>
+        ) : (
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/login" onClick={toggleMobileDrawer}>
+              <ListItemIcon>
+                <LoginIcon color="primary" />
+              </ListItemIcon>
+              <ListItemText primary="Log In" />
+            </ListItemButton>
+          </ListItem>
+        )}
+
+        <Box sx={{ p: 2, mt: 'auto' }}>
+          <ThemeToggleButton />
+        </Box>
+      </List>
+    </Drawer>
+  );
 
   return (
     <AppBar
       position="sticky"
-      color="default"
       elevation={0}
       sx={{
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
-        boxShadow: theme.shadows[4],
+        background: 'linear-gradient(135deg, #1976d2 0%, #9c27b0 100%)',
+        boxShadow: '0 2px 12px rgba(25, 118, 210, 0.3)',
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ px: { xs: 2, md: 4 } }}>
         {/* Logo */}
-        <Typography
-          variant="h6"
+        <Box
           component={Link}
           to="/"
           sx={{
             flexGrow: 1,
-            color: "#026CDF",
-            fontWeight: "bold",
-            fontSize: "1.5rem",
-            textDecoration: "none",
-            cursor: "pointer",
-            fontFamily: '"Press Start 2P", monospace',
-            letterSpacing: "1px",
-            textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            "&:hover": {
-              color: "#0350A0",
-              textShadow: "2px 2px 6px rgba(0,0,0,0.5)",
-            },
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none',
+            transition: 'transform 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.02)',
+            }
           }}
         >
-          Queue Up
-        </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "white",
+              fontWeight: "bold",
+              fontSize: { xs: "1.2rem", md: "1.5rem" },
+              fontFamily: '"Press Start 2P", monospace',
+              letterSpacing: "1px",
+              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+            }}
+          >
+            Queue Up
+          </Typography>
+        </Box>
 
-        {/* Navbar Buttons */}
+        {/* Desktop Navigation */}
         {!isMobile ? (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Link to="/events">
-              <Button sx={{ mr: 1 }}>Events</Button>
-            </Link>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {/* Events Button */}
+            <Button 
+              component={Link} 
+              to="/events"
+              startIcon={<EventIcon />}
+              sx={{
+                color: 'white',
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 2,
+                borderRadius: 2,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                  transform: 'translateY(-1px)'
+                }
+              }}
+            >
+              Events
+            </Button>
 
             {/* Organiser Dropdown */}
             <Button
-              sx={{ mr: 1 }}
               onClick={handleDropdownClick}
               endIcon={<ArrowDropDownIcon />}
+              startIcon={<BuildIcon />}
               aria-controls={open ? "organiser-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
+              sx={{
+                color: 'white',
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 2,
+                borderRadius: 2,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                  transform: 'translateY(-1px)'
+                }
+              }}
             >
               Organiser
             </Button>
@@ -106,13 +226,16 @@ const Navbar: React.FC = () => {
               anchorEl={anchorEl}
               open={open}
               onClose={handleDropdownClose}
-              slotProps={{
-                list: {
-                  "aria-labelledby": "organiser-button",
-                },
+              sx={{
+                '& .MuiPaper-root': {
+                  borderRadius: 2,
+                  mt: 1,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+                }
               }}
             >
               <MenuItem onClick={handleDropdownClose}>
+                <AddIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Link
                   to="/events/create"
                   style={{
@@ -126,32 +249,77 @@ const Navbar: React.FC = () => {
               </MenuItem>
             </Menu>
 
+            {/* Auth Button */}
             {isAuthenticated ? (
               <Button
                 variant="contained"
-                color="info"
                 onClick={signOut}
-                sx={{ mr: 1 }}
+                startIcon={<LogoutIcon />}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.15)',
+                  color: 'white',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.25)',
+                    transform: 'translateY(-1px)',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease'
+                }}
               >
-                Sign out
+                Sign Out
               </Button>
             ) : (
-              <Link to="/login">
-                <Button variant="contained" color="info" sx={{ mr: 1 }}>
-                  Log In
-                </Button>
-              </Link>
+              <Button
+                component={Link}
+                to="/login"
+                variant="contained"
+                startIcon={<LoginIcon />}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.15)',
+                  color: 'white',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.25)',
+                    transform: 'translateY(-1px)',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Log In
+              </Button>
             )}
 
-            {/* 🌙 Dark Mode Toggle */}
+            {/* Theme Toggle */}
             <ThemeToggleButton />
           </Box>
         ) : (
-          <IconButton size="large" edge="end" color="inherit" aria-label="menu">
+          /* Mobile Menu Button */
+          <IconButton 
+            size="large" 
+            edge="end" 
+            onClick={toggleMobileDrawer}
+            sx={{ 
+              color: 'white',
+              '&:hover': { 
+                bgcolor: 'rgba(255,255,255,0.1)',
+              }
+            }}
+          >
             <MenuIcon />
           </IconButton>
         )}
       </Toolbar>
+
+      {/* Mobile Drawer */}
+      <MobileDrawer />
     </AppBar>
   );
 };
