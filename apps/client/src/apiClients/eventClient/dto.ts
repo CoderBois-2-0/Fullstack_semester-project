@@ -72,6 +72,7 @@ interface IPaginatedEventResponse {
  * Client-side paginated event response
  */
 interface IPaginatedEvents {
+  filter(arg0: (event: any) => boolean): unknown;
   data: IEvent[];
   totalCount: number;
   totalPages: number;
